@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>诸葛亮线 · 游蜀拜师录</title>
+    <link rel="icon" type="image/svg+xml" href="../genie.svg">
+    <meta name="description" content="诸葛亮线 - 智谋计算的蜀地之旅">
+    
+    <!-- 引用公共CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <!-- 诸葛亮线公共CSS -->
+    <link rel="stylesheet" href="../css/hero-styles.css">
+</head>
+<body>
+    <!-- 页面顶部 -->
+    <div class="zhuge-header">
+        <div class="container">
+            <div class="hero-header">
+                <div class="hero-info">
+                    <h1 class="hero-name">
+                        <span class="hero-name-icon">🧮</span>
+                        诸葛亮 · 卧龙先生
+                    </h1>
+                    <p class="hero-title">智谋计算 · 隆中对·知识问答</p>
+                    
+                    <div class="stats-container" id="zhuge-stats">
+                        <!-- 状态数据会由JavaScript动态更新 -->
+                        <div class="zhuge-stat">
+                            <div class="stat-icon">⚔️</div>
+                            <div class="stat-label">谋略</div>
+                            <div class="stat-value" id="stat-strategy">0</div>
+                        </div>
+                        <div class="zhuge-stat">
+                            <div class="stat-icon">⚡</div>
+                            <div class="stat-label">效率</div>
+                            <div class="stat-value" id="stat-efficiency">0</div>
+                        </div>
+                        <div class="zhuge-stat">
+                            <div class="stat-icon">🎯</div>
+                            <div class="stat-label">进度</div>
+                            <div class="stat-value" id="stat-progress">5/5</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="act-indicator">
+                    <div class="act-number" id="act-number">5</div>
+                    <div class="act-text">第 <span id="act-text">五</span> 幕</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-secondary" data-action="go-home">
+                    ← 返回首页
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 游戏主内容 -->
+    <div class="container">
+        <div class="quiz-container" id="quiz-container">
+            <!-- 内容会由JavaScript动态生成 -->
+            <div id="quiz-content">
+                <!-- 开场内容 -->
+                <h2 class="quiz-title">诸葛亮线第五幕：隆中对·本线策问</h2>
+                <p class="quiz-subtitle">最终考验 - 验证你的智谋计算能力</p>
+                
+                <div id="opening-content" style="text-align: center;">
+                    <!-- 对话容器（用于动态对话） -->
+                    <div id="dialogue-log" class="dialogue-log" style="height: 150px; max-height: 200px; overflow-y: auto; padding: 18px; border: 1px solid var(--zhuge-color-light); border-radius: 8px; background: rgba(20, 20, 30, 0.9); margin-bottom: 25px; text-align: left; color: rgba(255, 255, 255, 0.95);">
+                        <!-- 对话会动态生成 -->
+                    </div>
+                    
+                    <p style="color: rgba(255, 255, 255, 0.8); font-size: 1.2rem; line-height: 1.6; margin-bottom: 30px;">
+                        本卷共五题，皆为现代商业实践与古之智谋的对照。<br>
+                        每题皆基于前三幕所学，仔细审题，选择最佳策略。
+                    </p>
+                    
+                    <p style="color: var(--zhuge-color); font-size: 1.3rem; font-weight: bold; margin-bottom: 40px;">
+                        诸葛亮：审题宜缓，落子宜准。开始吧。
+                    </p>
+                    
+                    <button id="start-quiz-btn" class="quiz-btn" style="padding: 15px 50px; font-size: 1.2rem;">
+                        开始策问
+                    </button>
+                </div>
+                
+                <!-- 问答界面（初始隐藏） -->
+                <div id="question-container" style="display: none;">
+                    <!-- 对话容器（用于答案反馈） -->
+                    <div id="quiz-dialogue-log" class="dialogue-log" style="height: 100px; max-height: 150px; overflow-y: auto; padding: 15px; border: 1px solid var(--zhuge-color-light); border-radius: 8px; background: rgba(20, 20, 30, 0.9); margin-bottom: 20px; text-align: left; color: rgba(255, 255, 255, 0.95);">
+                        <!-- 诸葛亮的答案反馈会动态生成 -->
+                    </div>
+                    
+                    <div class="question-number" id="question-number">第 1 题 / 共 5 题</div>
+                    <div class="question-text" id="question-text">题目加载中...</div>
+                    
+                    <div class="options-container" id="options-container">
+                        <!-- 选项会动态生成 -->
+                    </div>
+                    
+                    <div class="answer-feedback" id="answer-feedback">
+                        <!-- 答案解析会动态生成 -->
+                    </div>
+                    
+                    <div class="quiz-navigation">
+                        <div class="quiz-progress" id="quiz-progress">已答：0/5</div>
+                        <button id="next-question-btn" class="quiz-btn" disabled>下一题</button>
+                    </div>
+                </div>
+                
+                <!-- 结果界面（初始隐藏） -->
+                <div id="results-container" style="display: none;">
+                    <!-- 结果会动态生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 引用公共JavaScript -->
+    <script src="../js/common.js"></script>
+    
+    <!-- 诸葛亮线知识问答JavaScript -->
+    <script>
+        // 诸葛亮线状态变量
+        const zhugeState = {
+            currentAct: 5,                // 当前幕数
+            strategyCount: 0,             // 谋略数量
+            efficiencyCount: 0,           // 效率数量
+            quizStarted: false,           // 问答是否开始
+            currentQuestion: 0,           // 当前题目索引
+            userAnswers: [],              // 用户答案
+            quizScore: 0                  // 问答得分
+        };
+        
+        // 知识问答题目（隆中对·本线策问）
+        const quizQuestions = [
+            {
+                question: "诸葛亮： 第一题，验算基础。AG超玩会主场通过何种技术，将线上观赛延迟压至毫秒级？",
+                options: [
+                    "A. 5G双路专线与边缘计算",
+                    "B. 卫星直拨与高速光纤"
+                ],
+                correctAnswer: 0, // A选项
+                correctFeedback: "计算无误。基础扎实。",
+                wrongFeedback: "战术如此拙劣。通信基建的拓扑结构，你需再复盘。"
+            },
+            {
+                question: "诸葛亮： 第二题，考察布局。AG主场选址于高新产业园区核心，其主要战略意图是什么？",
+                options: [
+                    "A. 地价便宜，能省下不少预算",
+                    "B. 构建'工作-观赛-消费'的产业生态闭环"
+                ],
+                correctAnswer: 1,
+                correctFeedback: "计算无误。看来你理解了何为'布局'。",
+                wrongFeedback: "短视。你的老师没教过你，真正的成本是'用户获取成本'吗？"
+            },
+            {
+                question: "诸葛亮： 第三题，分析策略。峡谷·盛宴餐厅的'段位折扣'机制，其根本目的是什么？",
+                options: [
+                    "A. 筛选高价值用户，并利用其成就心理提升复购与忠诚度",
+                    "B. 做个噱头，显得这家店很懂游戏而已"
+                ],
+                correctAnswer: 0, // A选项
+                correctFeedback: "计算无误。洞察人性，方为上策。",
+                wrongFeedback: "以你的智商，恐怕很难理解'用户终身价值'这个概念。罢了。"
+            },
+            {
+                question: "诸葛亮： 第四题，解读现象。峡谷·盛宴的菜单分'骨灰版'与'小白版'，这属于何种设计？",
+                options: [
+                    "A. 过度设计，增加了不必要的运营复杂度",
+                    "B. 精细化运营，实现对核心玩家与泛用户的无缝覆盖"
+                ],
+                correctAnswer: 1,
+                correctFeedback: "正确。这叫'精细化运营'，不是过度设计。",
+                wrongFeedback: "流于表面。一石二鸟，覆盖全域用户，是标准的数据驱动策略。"
+            },
+            {
+                question: "诸葛亮： 最终题，总结核心。电竞从业者于武侯祠中寻求'文化校准'，其本质是为何？",
+                options: [
+                    "A. 寻求一些玄学上的保佑，图个心理安慰",
+                    "B. 为纯粹的理性决策模型，注入感性的历史纵深与定力"
+                ],
+                correctAnswer: 1,
+                correctFeedback: "计算无误。理性与感性，数据与人文，本就是一体两面。",
+                wrongFeedback: "若决策依赖玄学，这行业早该倾覆了。你的思考，需要更深的底层逻辑。"
+            }
+        ];
+
+        // ==================== 对话系统 ====================
+        
+        // 添加对话（与李白线完全一致）
+        function addZhugeDialogue(text, speaker = '玩家') {
+            // 根据当前阶段选择对话容器
+            // 答题未开始时用开场对话容器，答题开始后用答题对话容器
+            let dialogueLog = null;
+            if (zhugeState.quizStarted) {
+                dialogueLog = document.getElementById('quiz-dialogue-log');
+            }
+            if (!dialogueLog) {
+                dialogueLog = document.getElementById('dialogue-log');
+            }
+            
+            if (!dialogueLog) return;
+            
+            const messageDiv = document.createElement('div');
+            
+            // 根据说话者选择样式类
+            // 如果是诸葛亮用 .zhuge-message，其他用 .player-message
+            messageDiv.className = speaker === '诸葛亮' ? 'zhuge-message' : 'player-message';
+            
+            const speakerName = speaker === '诸葛亮' ? '诸葛亮' : '玩家';
+            messageDiv.innerHTML = `<strong>${speakerName}：</strong> ${text}`;
+            
+            dialogueLog.appendChild(messageDiv);
+            
+            // 自动滚动到底部
+            dialogueLog.scrollTop = dialogueLog.scrollHeight;
+        }
+
+        // ==================== 页面初始化 ====================
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('诸葛亮线第五幕页面已加载');
+            
+            // 如果是fresh进入，清除旧状态使对话从头开始
+            clearActStateOnFreshEntry('zhugeState');
+            
+            // 加载诸葛亮线状态
+            loadZhugeState();
+            
+            // 绑定事件
+            bindQuizEvents();
+            
+            // 添加开场对话
+            setTimeout(() => {
+                addZhugeDialogue("三站已毕，所学几何？亮有一卷考题，皆出自你我此行所言。答对五题，方算不虚此行。", "诸葛亮");
+            }, 500);
+            
+            // 确保页面可见
+            document.body.style.display = 'block';
+        });
+        
+        // ==================== 状态管理 ====================
+        
+        // 加载诸葛亮线状态
+        function loadZhugeState() {
+            try {
+                const savedState = localStorage.getItem('zhugeState');
+                if (savedState) {
+                    const parsed = JSON.parse(savedState);
+                    Object.assign(zhugeState, parsed);
+                }
+                
+                // 加载谋略和效率
+                zhugeState.strategyCount = parseInt(localStorage.getItem('zhuge_strategyCount')) || 0;
+                zhugeState.efficiencyCount = parseInt(localStorage.getItem('zhuge_efficiencyCount')) || 0;
+                
+                // 已通关？加载最终属性并锁定（回看模式）
+                if (isHeroLineCompleted('zhugeLiang')) {
+                    const final = getHeroFinalAttrs('zhugeLiang');
+                    if (final) {
+                        zhugeState.strategyCount = final.strategy;
+                        zhugeState.efficiencyCount = final.efficiency;
+                        zhugeState._locked = true;
+                    }
+                }
+                
+                updateZhugeStats();
+                console.log('诸葛亮线状态已加载', zhugeState._locked ? '(锁定模式)' : '');
+            } catch (error) {
+                console.error('加载诸葛亮线状态失败:', error);
+            }
+        }
+        
+        // 保存诸葛亮线状态
+        function saveZhugeState() {
+            try {
+                localStorage.setItem('zhugeState', JSON.stringify(zhugeState));
+                localStorage.setItem('zhuge_strategyCount', zhugeState.strategyCount);
+                localStorage.setItem('zhuge_efficiencyCount', zhugeState.efficiencyCount);
+                
+                // 同时保存到全局状态
+                gameState.stats.strategy = zhugeState.strategyCount;
+                gameState.stats.efficiency = zhugeState.efficiencyCount;
+                saveGameState();
+                
+                console.log('诸葛亮线状态已保存');
+            } catch (error) {
+                console.error('保存诸葛亮线状态失败:', error);
+            }
+        }
+        
+        // 更新诸葛亮线统计显示
+        function updateZhugeStats() {
+            const strategyElement = document.getElementById('stat-strategy');
+            const efficiencyElement = document.getElementById('stat-efficiency');
+            const progressElement = document.getElementById('stat-progress');
+            
+            if (strategyElement) strategyElement.textContent = zhugeState.strategyCount;
+            if (efficiencyElement) efficiencyElement.textContent = zhugeState.efficiencyCount;
+            if (progressElement) progressElement.textContent = '5/5';
+        }
+        
+        // ==================== 问答系统 ====================
+        
+        // 开始问答
+        function startQuiz() {
+            zhugeState.quizStarted = true;
+            zhugeState.currentQuestion = 0;
+            zhugeState.userAnswers = [];
+            zhugeState.quizScore = 0;
+            
+            // 隐藏开场内容，显示第一题
+            document.getElementById('opening-content').style.display = 'none';
+            document.getElementById('question-container').style.display = 'block';
+            
+            // 显示第一题
+            showQuestion(0);
+        }
+        
+        // 显示题目
+        function showQuestion(questionIndex) {
+            const question = quizQuestions[questionIndex];
+            
+            // 更新题目编号
+            document.getElementById('question-number').textContent = `第 ${questionIndex + 1} 题 / 共 ${quizQuestions.length} 题`;
+            
+            // 更新题目文本
+            document.getElementById('question-text').textContent = question.question;
+            
+            // 清空选项容器
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            // 添加选项
+            question.options.forEach((optionText, index) => {
+                const optionElement = document.createElement('button');
+                optionElement.className = 'quiz-option';
+                optionElement.textContent = optionText;
+                
+                // 检查是否已经回答过此题
+                if (zhugeState.userAnswers[questionIndex] !== undefined) {
+                    // 已回答，显示结果状态
+                    optionElement.disabled = true;
+                    
+                    if (index === question.correctAnswer) {
+                        optionElement.classList.add('correct');
+                    } else if (index === zhugeState.userAnswers[questionIndex]) {
+                        optionElement.classList.add('incorrect');
+                    }
+                    
+                    if (index === zhugeState.userAnswers[questionIndex]) {
+                        optionElement.classList.add('selected');
+                    }
+                } else {
+                    // 未回答，添加点击事件
+                    optionElement.addEventListener('click', () => {
+                        selectAnswer(questionIndex, index);
+                    });
+                }
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // 更新导航按钮
+            updateNavigationButtons(questionIndex);
+            
+            // 显示或隐藏答案解析
+            const feedbackElement = document.getElementById('answer-feedback');
+            if (zhugeState.userAnswers[questionIndex] !== undefined && question.explanation) {
+                feedbackElement.innerHTML = `<strong>解析：</strong>${question.explanation}`;
+                feedbackElement.classList.add('show');
+            } else {
+                feedbackElement.classList.remove('show');
+            }
+        }
+        
+        // 选择答案
+        function selectAnswer(questionIndex, answerIndex) {
+            // 记录用户答案
+            zhugeState.userAnswers[questionIndex] = answerIndex;
+            
+            // 检查是否正确
+            const isCorrect = answerIndex === quizQuestions[questionIndex].correctAnswer;
+            if (isCorrect) {
+                zhugeState.quizScore++;
+            }
+            
+            // 禁用所有选项并显示结果状态
+            const options = document.querySelectorAll('.quiz-option');
+            options.forEach((option, index) => {
+                option.disabled = true;
+                
+                if (index === quizQuestions[questionIndex].correctAnswer) {
+                    option.classList.add('correct');
+                } else if (index === answerIndex && !isCorrect) {
+                    option.classList.add('incorrect');
+                }
+                
+                if (index === answerIndex) {
+                    option.classList.add('selected');
+                }
+            });
+            
+            // 显示诸葛亮的即时反馈（使用对话系统）
+            const question = quizQuestions[questionIndex];
+            let zhugeFeedback = '';
+            
+            if (isCorrect) {
+                zhugeFeedback = question.correctFeedback || "计算无误。";
+            } else {
+                zhugeFeedback = question.wrongFeedback || "战术如此拙劣。";
+            }
+            
+            // 使用对话系统显示诸葛亮的反馈
+            addZhugeDialogue(zhugeFeedback, '诸葛亮');
+            
+            // 显示答案解析（如果有）
+            const feedbackElement = document.getElementById('answer-feedback');
+            if (question.explanation) {
+                feedbackElement.innerHTML = `<strong>解析：</strong>${question.explanation}`;
+                feedbackElement.classList.add('show');
+            } else {
+                feedbackElement.classList.remove('show');
+            }
+            
+            // 更新导航按钮
+            updateNavigationButtons(questionIndex);
+            
+            // 更新进度
+            updateProgress();
+        }
+        
+        // 更新导航按钮
+        function updateNavigationButtons(questionIndex) {
+            const nextBtn = document.getElementById('next-question-btn');
+            
+            if (zhugeState.userAnswers[questionIndex] !== undefined) {
+                // 已回答此题，启用下一题按钮
+                nextBtn.disabled = false;
+                
+                if (questionIndex === quizQuestions.length - 1) {
+                    // 最后一题，修改按钮文本
+                    nextBtn.textContent = '查看结果';
+                    nextBtn.onclick = showResults;
+                } else {
+                    // 不是最后一题
+                    nextBtn.textContent = '下一题';
+                    nextBtn.onclick = () => {
+                        showQuestion(questionIndex + 1);
+                    };
+                }
+            } else {
+                // 未回答此题，禁用下一题按钮
+                nextBtn.disabled = true;
+            }
+        }
+        
+        // 更新进度显示
+        function updateProgress() {
+            const answeredCount = zhugeState.userAnswers.filter(answer => answer !== undefined).length;
+            document.getElementById('quiz-progress').textContent = `已答：${answeredCount}/${quizQuestions.length}`;
+        }
+        
+        // 显示结果
+        function showResults() {
+            // 隐藏问题容器，显示结果容器
+            document.getElementById('question-container').style.display = 'none';
+            document.getElementById('results-container').style.display = 'block';
+            
+            // 计算结果
+            const score = zhugeState.quizScore;
+            const total = quizQuestions.length;
+            const percentage = Math.round((score / total) * 100);
+            
+            // 根据得分给予评价和奖励（5题满分）
+            let rating = '';
+            let description = '';
+            let strategyBonus = 0;
+            let efficiencyBonus = 0;
+            
+            if (percentage === 100) { // 5/5 = 100%
+                rating = '神机妙算';
+                description = '五题全对，计算精准无误。你对数据、运营、人心的理解已臻化境。古今智谋，融会贯通，可称当代小诸葛。';
+                strategyBonus = 3;
+                efficiencyBonus = 2;
+            } else if (percentage >= 80) { // 4/5 = 80%
+                rating = '算无遗策';
+                description = '答对四题，表现优异。你对现代商业的智谋计算已有深刻把握，但在某些细节上仍需锤炼。';
+                strategyBonus = 2;
+                efficiencyBonus = 1;
+            } else if (percentage >= 60) { // 3/5 = 60%
+                rating = '尚可雕琢';
+                description = '答对三题，勉强及格。你掌握了基本概念，但距离真正的"计算"之道尚有距离。需更多实践与思考。';
+                strategyBonus = 1;
+                efficiencyBonus = 1;
+            } else {
+                rating = '勤能补拙';
+                description = '答对不足三题，尚未合格。你对智谋计算的理解尚浅。建议复盘前三幕，重新思考数据、运营与人心之道。';
+                strategyBonus = 0;
+                efficiencyBonus = 0;
+            }
+            
+            // 添加属性奖励（已通关时跳过）
+            if (!zhugeState._locked) {
+                zhugeState.strategyCount += strategyBonus;
+                zhugeState.efficiencyCount += efficiencyBonus;
+            }
+            
+            // 检查成就：谋略累计3次
+            if (zhugeState.strategyCount >= 3) {
+                unlockAchievement('zhuge_wisdom', '智谋初显', '在诸葛亮线完成三次智慧选择');
+            }
+            // 检查成就：效率累计3次
+            if (zhugeState.efficiencyCount >= 3) {
+                unlockAchievement('zhuge_efficiency', '效率专家', '在诸葛亮线完成三次效率选择');
+            }
+            
+            // 生成结果HTML
+            const resultsHTML = `
+                <div class="results-container">
+                    <h2 class="results-title">问答完成</h2>
+                    <div class="results-score">${score}/${total}</div>
+                    <div class="results-subtitle">正确率 ${percentage}%</div>
+                    <div class="results-rating">${rating}</div>
+                    
+                    <p class="results-description">${description}</p>
+                    
+                    <div style="background: rgba(0, 102, 204, 0.1); padding: 20px; border-radius: 10px; margin-bottom: 30px; max-width: 500px; margin-left: auto; margin-right: auto;">
+                        <div style="color: var(--zhuge-color); font-weight: bold; margin-bottom: 10px;">本场奖励</div>
+                        <div style="display: flex; justify-content: space-around;">
+                            <div>
+                                <div style="font-size: 2rem; color: white;">+${strategyBonus}</div>
+                                <div style="color: rgba(255, 255, 255, 0.7);">谋略</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 2rem; color: white;">+${efficiencyBonus}</div>
+                                <div style="color: rgba(255, 255, 255, 0.7);">效率</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 40px;">
+                        <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 20px;">恭喜完成诸葛亮线全部内容！</p>
+                        <button id="view-certificate-btn" class="quiz-btn" style="padding: 15px 50px; font-size: 1.2rem;">
+                            查看最终证书
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('results-container').innerHTML = resultsHTML;
+            
+            // 绑定查看证书按钮事件
+            document.getElementById('view-certificate-btn').addEventListener('click', viewCertificate);
+            
+            // 更新状态显示
+            updateZhugeStats();
+            saveZhugeState();
+        }
+        
+        // 查看证书
+        function viewCertificate() {
+            // 保存最终状态
+            saveZhugeState();
+            
+            // 标记诸葛亮线已通关（5幕全完成）
+            saveProgress('zhugeLiang', 5);
+            
+            // 解锁诸葛亮线全通成就
+            unlockAchievement('zhuge_complete', '诸葛亮线全通', '完成诸葛亮线全部五幕内容');
+            
+            // 检查全能学徒成就（体验所有三条英雄路线）
+            checkAllHeroesAchievement();
+            
+            // 检查完美收集者成就（解锁所有成就）
+            checkAllAchievementsAchievement();
+            
+            // 保存游魂数据（智谋+效率综合值）
+            saveSoulData('zhugeLiang', {
+                strategy: zhugeState.strategyCount,
+                efficiency: zhugeState.efficiencyCount,
+                soulValue: zhugeState.strategyCount + zhugeState.efficiencyCount
+            });
+            
+            // 计算称号
+            let title = "智谋电竞师";
+            
+            if (zhugeState.strategyCount >= zhugeState.efficiencyCount * 2) {
+                title = "卧龙军师";
+            } else if (zhugeState.efficiencyCount >= zhugeState.strategyCount * 2) {
+                title = "效率达人";
+            } else if (zhugeState.quizScore * 10 >= 40) {
+                title = "神机妙算";
+            }
+            
+            // 跳转到证书页面，传递参数
+            const params = new URLSearchParams({
+                title: title,
+                hero: '诸葛亮',
+                strategy: zhugeState.strategyCount,
+                efficiency: zhugeState.efficiencyCount,
+                quiz: zhugeState.quizScore * 10
+            });
+            
+            window.location.href = `../certificate.html?${params.toString()}`;
+        }
+        
+        // ==================== 事件绑定 ====================
+        
+        function bindQuizEvents() {
+            // 开始问答按钮
+            const startQuizBtn = document.getElementById('start-quiz-btn');
+            if (startQuizBtn) {
+                startQuizBtn.addEventListener('click', startQuiz);
+            }
+            
+            // 返回首页按钮
+            const goHomeBtn = document.querySelector('[data-action="go-home"]');
+            if (goHomeBtn) {
+                goHomeBtn.addEventListener('click', function() {
+                    window.location.href = '../index.html';
+                });
+            }
+        }
+    </script>
+</body>
+</html>

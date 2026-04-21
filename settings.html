@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设置 · 游蜀拜师录</title>
+    <link rel="icon" type="image/svg+xml" href="genie.svg">
+    <meta name="description" content="游戏设置 - 调整游戏体验">
+    
+    <!-- 引用公共CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- 设置页面特有样式 -->
+    <style>
+        /* 设置页面特有样式 */
+        :root {
+            --settings-color: #60E0FF;
+            --settings-color-light: rgba(96, 224, 255, 0.1);
+        }
+        
+        .settings-header {
+            background: linear-gradient(135deg, var(--settings-color-light), rgba(10, 10, 10, 0.9));
+            border-bottom: 2px solid var(--settings-color);
+            padding: 30px 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .settings-title {
+            font-size: 2.5rem;
+            color: var(--settings-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .settings-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+        }
+        
+        .settings-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .settings-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .settings-card:hover {
+            border-color: var(--settings-color);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .settings-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--settings-color);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-icon {
+            font-size: 1.2rem;
+        }
+        
+        .setting-item {
+            margin-bottom: 25px;
+        }
+        
+        .setting-label {
+            display: block;
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        .setting-description {
+            display: block;
+            margin-bottom: 15px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .slider-value {
+            min-width: 60px;
+            text-align: center;
+            font-weight: bold;
+            color: var(--settings-color);
+            background: rgba(96, 224, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 6px;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .radio-input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--settings-color);
+            cursor: pointer;
+        }
+        
+        .radio-label {
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+        }
+        
+        .radio-option:hover .radio-label {
+            color: var(--settings-color);
+        }
+        
+        .radio-input:checked + .radio-label {
+            color: var(--settings-color);
+            font-weight: bold;
+        }
+        
+        .select-input {
+            width: 100%;
+            max-width: 300px;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .select-input:hover {
+            border-color: var(--settings-color);
+            background: rgba(96, 224, 255, 0.05);
+        }
+        
+        .select-input:focus {
+            outline: none;
+            border-color: var(--settings-color);
+            box-shadow: 0 0 0 2px rgba(96, 224, 255, 0.2);
+        }
+        
+        .settings-actions {
+            display: flex;
+            gap: 20px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .warning-section {
+            background: rgba(255, 100, 100, 0.05);
+            border: 1px solid rgba(255, 100, 100, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+        }
+        
+        .warning-title {
+            color: #ff6464;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .warning-content {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .reset-button {
+            background: linear-gradient(135deg, #ff6464, #ff4d4d);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .reset-button:hover {
+            background: linear-gradient(135deg, #ff4d4d, #ff3333);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 100, 100, 0.2);
+        }
+        
+        .feedback-section {
+            background: rgba(96, 224, 255, 0.05);
+            border: 1px solid rgba(96, 224, 255, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+        }
+        
+        .feedback-title {
+            color: var(--settings-color);
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .feedback-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+            transition: all 0.3s ease;
+        }
+        
+        .feedback-input:hover {
+            border-color: var(--settings-color);
+            background: rgba(96, 224, 255, 0.05);
+        }
+        
+        .feedback-input:focus {
+            outline: none;
+            border-color: var(--settings-color);
+            box-shadow: 0 0 0 2px rgba(96, 224, 255, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .settings-card {
+                padding: 20px;
+            }
+            
+            .slider-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            
+            .slider-value {
+                align-self: center;
+            }
+            
+            .radio-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .settings-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 页面顶部 -->
+    <div class="settings-header">
+        <div class="header-content">
+            <h1 class="settings-title">
+                <span>⚙️</span>
+                游戏设置
+            </h1>
+            <p class="settings-subtitle">根据你的喜好调整游戏体验</p>
+        </div>
+    </div>
+    
+    <!-- 设置主内容 -->
+    <div class="settings-container">
+        <div class="settings-card">
+            <!-- 音乐设置 -->
+            <div class="settings-section">
+                <h2 class="section-title">
+                    <span class="section-icon">🎵</span>
+                    音乐设置
+                </h2>
+                
+                <div class="setting-item">
+                    <label class="setting-label">音乐音量</label>
+                    <p class="setting-description">调整游戏背景音乐的音量大小</p>
+                    <div class="slider-container">
+                        <input type="range" id="music-volume" class="slider" min="0" max="100" step="5" value="50">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 重置数据警告 -->
+        <div class="warning-section">
+            <h3 class="warning-title">
+                <span>⚠️</span>
+                危险操作
+            </h3>
+            <div class="warning-content">
+                <p>此操作将清除所有游戏数据，包括：</p>
+                <ul style="margin-left: 20px; margin-top: 10px; color: rgba(255, 255, 255, 0.7);">
+                    <li>所有英雄线进度</li>
+                    <li>已解锁的成就</li>
+                    <li>收集的属性点数</li>
+                </ul>
+                <p style="margin-top: 15px;">此操作不可撤销，请谨慎操作！</p>
+            </div>
+            <button id="reset-data" class="reset-button">
+                🗑️ 重置所有游戏数据
+            </button>
+        </div>
+        
+
+    </div>
+    
+    <!-- 引用公共JavaScript -->
+    <script src="js/common.js"></script>
+    
+    <!-- 设置页面特有JavaScript -->
+    <script>
+        console.log('⚙️ 设置弹窗已打开');
+        console.log('bgmManager 存在:', !!window.bgmManager);
+        
+        // ==================== 立即初始化（不用 DOMContentLoaded）====================
+        
+        // 加载当前设置
+        loadCurrentSettings();
+        
+        // 将音量设置应用到 BGM
+        if (window.bgmManager && bgmManager.audio) {
+            bgmManager.audio.volume = gameState.settings.musicVolume;
+            console.log('✓ BGM 音量已设置为:', gameState.settings.musicVolume);
+        } else {
+            console.warn('✗ BGM audio 不存在');
+        }
+        
+        // 绑定滑块事件
+        bindSliderEvents();
+        
+        // 绑定设置事件
+        bindSettingsEvents();
+        
+        console.log('✓ 设置页面初始化完成');
+        
+        // ==================== 设置管理 ====================
+        
+        function loadCurrentSettings() {
+            loadSettings();
+            updateSettingsUI();
+        }
+        
+        function updateSettingsUI() {
+            document.getElementById('music-volume').value = gameState.settings.musicVolume * 100;
+        }
+        
+        function getCurrentSettings() {
+            return {
+                musicVolume: parseInt(document.getElementById('music-volume').value) / 100
+            };
+        }
+        
+        function saveCurrentSettings() {
+            try {
+                const currentSettings = getCurrentSettings();
+                Object.assign(gameState.settings, currentSettings);
+                saveSettings();
+                applySettings();
+                showMessage('设置已保存！', 'success');
+                console.log('设置已保存:', currentSettings);
+            } catch (error) {
+                console.error('保存设置失败:', error);
+                showMessage('保存设置失败，请重试。', 'error');
+            }
+        }
+        
+        // ==================== 事件绑定 ====================
+        
+        function bindSettingsEvents() {
+            const resetDataButton = document.getElementById('reset-data');
+            if (resetDataButton) {
+                resetDataButton.addEventListener('click', function() {
+                    if (confirm('⚠️ 警告！这将删除所有游戏数据，包括进度和成就！\n\n确定要继续吗？')) {
+                        if (confirm('最后确认：你真的要删除所有游戏数据吗？\n此操作无法撤销！')) {
+                            clearAllProgress();
+                            resetGameData();
+                        }
+                    }
+                });
+            }
+        }
+        
+        function bindSliderEvents() {
+            const musicSlider = document.getElementById('music-volume');
+            
+            musicSlider.addEventListener('input', function() {
+                const volume = parseInt(this.value) / 100;
+                console.log('滑块拖动, 目标音量:', volume);
+                
+                if (window.bgmManager) {
+                    bgmManager.setVolume(volume);
+                    console.log('✓ setVolume 已调用, 实际音量:', bgmManager.getVolume());
+                } else {
+                    console.warn('✗ bgmManager 不存在!');
+                }
+            });
+            
+            musicSlider.addEventListener('change', function() {
+                console.log('音乐音量调整为:', this.value + '%');
+            });
+        }
+        
+    </script>
+</body>
+</html>
