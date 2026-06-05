@@ -65,7 +65,11 @@ function getRootPath() {
     // 过滤空段和盘符段（file:///C:/path → 盘符 C: 不应计入深度）
     const parts = dir.split('/').filter(p => p && !/^[A-Za-z]:$/.test(p));
     if (parts.length === 0) return './';
-    return '../'.repeat(parts.length);
+    // GitHub Pages 项目仓库兼容：
+    // 最后一层路径（如仓库名 you-shu-bai-shi-lu）视为"项目根目录"
+    // 不再向上回退，避免跳出仓库名导致 404
+    const depth = Math.max(0, parts.length - 1);
+    return '../'.repeat(depth) || './';
 }
 
 // ==================== 本地存储工具函数 ====================
