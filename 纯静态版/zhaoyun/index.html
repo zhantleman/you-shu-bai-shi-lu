@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>赵云线 · 选择章节 - 游蜀拜师录</title>
+    <link rel="icon" type="image/svg+xml" href="../genie.svg">
+    <meta name="description" content="赵云线章节选择 - 选择你要挑战的篇章">
+
+    <!-- 公共CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- 赵云主题CSS -->
+    <link rel="stylesheet" href="../css/hero-styles.css">
+    <!-- 选关系统CSS -->
+    <link rel="stylesheet" href="../css/level-select.css">
+
+    <style>
+        /* 入口页专属背景 */
+        body {
+            background: #0D0F1A;
+            background-image:
+                radial-gradient(ellipse at 20% 50%, rgba(220, 38, 38, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 30%, rgba(220, 38, 38, 0.04) 0%, transparent 50%);
+        }
+        /* 覆写选关色彩变量为赵云红 */
+        :root {
+            --color-primary: #DC2626;
+            --hero-primary: #DC2626;
+            --hero-light: rgba(220, 38, 38, 0.2);
+            --hero-glow: rgba(239, 68, 68, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- 入口页内容由 JS 动态渲染 -->
+    <div id="level-entry-container"></div>
+
+    <!-- 公共JS -->
+    <script src="../js/common.js"></script>
+    <!-- 选关管理JS -->
+    <script src="../js/level-select.js"></script>
+
+    <script>
+        // 页面加载后初始化入口页（全屏卡片式）
+        document.addEventListener('DOMContentLoaded', function() {
+            // 加载公共设置
+            loadGameState();
+            loadSettings();
+            applySettings();
+
+            // 初始化BGM
+            bgmManager.init();
+            bgmManager.play('zhaoYun');
+            window.addEventListener('beforeunload', () => bgmManager.saveState());
+
+            // 初始化选关入口页 — 赵云线
+            LevelSelect.initPage('zhaoYun');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>赵云线 · 龙魂之鉴</title>
+    <link rel="icon" type="image/svg+xml" href="../genie.svg">
+    <meta name="description" content="赵云线第五幕 - 龙魂之鉴">
+    
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/hero-styles.css">
+    <link rel="stylesheet" href="../css/level-select.css">
+    
+    <style>
+        :root{--li-bai-primary:#DC2626}
+        /* ===== 第五幕《龙魂之鉴》专属样式 ===== */
+        
+        body.act-bg {
+            background-image: url('../images/wuhou-guard.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .act5-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 30px;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* ===== 开场画面 ===== */
+        .act5-intro {
+            text-align: center;
+            padding: 60px 40px;
+            animation: act5FadeIn 1.2s ease-out;
+        }
+
+        @keyframes act5FadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .act5-intro-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            filter: drop-shadow(0 4px 12px rgba(255,215,0,0.4));
+        }
+
+        .act5-intro-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ffd700;
+            letter-spacing: 6px;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 10px rgba(255,215,0,0.3);
+        }
+
+        .act5-intro-subtitle {
+            font-size: 1.05rem;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.9;
+            max-width: 520px;
+            margin: 0 auto 36px;
+        }
+
+        .act5-intro-btn {
+            padding: 14px 48px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(135deg, #d4a017, #b8860b);
+            color: #1a1a1a;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255,215,0,0.3);
+        }
+
+        .act5-intro-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255,215,0,0.45);
+        }
+
+        /* ===== 回顾轮次 ===== */
+        .act5-round {
+            display: none;
+            animation: act5SlideIn 0.6s ease-out;
+        }
+        
+        .act5-round.active {
+            display: block;
+        }
+
+        @keyframes act5SlideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .act5-round-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .act5-round-num {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 22px;
+            background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(184,134,11,0.15));
+            border: 1px solid rgba(255,215,0,0.35);
+            border-radius: 24px;
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .act5-round-progress {
+            display: flex;
+            gap: 8px;
+        }
+
+        .act5-progress-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            border: 1.5px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .act5-progress-dot.done { background: #51cf66; border-color: #51cf66; }
+        .act5-progress-dot.current { 
+            background: #ffd700; 
+            border-color: #ffd700;
+            box-shadow: 0 0 8px rgba(255,215,0,0.5);
+            animation: pulseDot 1.5s infinite;
+        }
+        @keyframes pulseDot {
+            0%,100%{ box-shadow:0 0 8px rgba(255,215,0,0.5); }
+            50%{ box-shadow:0 0 16px rgba(255,215,0,0.8); }
+        }
+
+        .act5-round-body {
+            display: flex;
+            gap: 28px;
+            align-items: stretch;
+        }
+
+        @media (max-width: 700px) {
+            .act5-round-body { flex-direction: column; }
+        }
+
+        /* 左侧：回放卡片 */
+        .act5-replay-card {
+            flex: 1;
+            min-width: 0;
+            background: linear-gradient(145deg, rgba(0,0,0,0.35), rgba(0,0,0,0.18));
+            border: 1px solid rgba(255,215,0,0.18);
+            border-radius: 16px;
+            padding: 26px 22px;
+            position: relative;
+        }
+
+        .act5-replay-label {
+            font-size: 0.78rem;
+            color: rgba(255,215,0,0.55);
+            letter-spacing: 3px;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+        }
+
+        .act5-replay-text {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.9);
+            line-height: 1.85;
+        }
+
+        .act5-replay-text .hl {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .act5-replay-text .res-icon {
+            font-size: 1.15em;
+            margin: 0 2px;
+        }
+
+        /* 右侧：心法抉择 */
+        .act5-choice-panel {
+            flex: 1.15;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .act5-choice-label {
+            font-size: 0.78rem;
+            color: rgba(255,215,0,0.55);
+            letter-spacing: 3px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .act5-choice-btn {
+            background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+            border: 1.5px solid rgba(255,255,255,0.12);
+            border-radius: 14px;
+            padding: 20px 20px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .act5-choice-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 0, rgba(255,215,0,0.08), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .act5-choice-btn:hover {
+            border-color: rgba(255,215,0,0.35);
+            transform: translateY(-2px);
+        }
+
+        .act5-choice-btn:hover::before { opacity: 1; }
+
+        .act5-choice-btn.choice-a:hover {
+            border-color: rgba(81,207,102,0.45);
+            box-shadow: 0 4px 20px rgba(81,207,102,0.12);
+        }
+
+        .act5-choice-btn.choice-b:hover {
+            border-color: rgba(107,160,255,0.45);
+            box-shadow: 0 4px 20px rgba(107,160,255,0.12);
+        }
+
+        .act5-choice-btn.selected {
+            border-color: #ffd700 !important;
+            background: linear-gradient(145deg, rgba(255,215,0,0.1), rgba(255,215,0,0.03)) !important;
+            box-shadow: 0 0 20px rgba(255,215,0,0.15) !important;
+        }
+
+        .act5-choice-tag {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .choice-a .act5-choice-tag {
+            background: rgba(81,207,102,0.15);
+            color: #51cf66;
+            border: 1px solid rgba(81,207,102,0.25);
+        }
+
+        .choice-b .act5-choice-tag {
+            background: rgba(107,160,255,0.15);
+            color: #6ba0ff;
+            border: 1px solid rgba(107,160,255,0.25);
+        }
+
+        .act5-choice-title {
+            font-size: 1.08rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .act5-choice-desc {
+            font-size: 0.92rem;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.65;
+        }
+
+        /* ===== 结果页面 ===== */
+        .act5-result {
+            display: none;
+            text-align: center;
+            animation: act5ResultIn 1s ease-out;
+        }
+
+        .act5-result.active { display: block; }
+
+        @keyframes act5ResultIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .act5-result-banner {
+            font-size: 1rem;
+            color: rgba(255,215,0,0.6);
+            letter-spacing: 5px;
+            margin-bottom: 16px;
+        }
+
+        .act5-result-tag {
+            display: inline-block;
+            padding: 10px 32px;
+            background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,215,0,0.08));
+            border: 2px solid rgba(255,215,0,0.4);
+            border-radius: 30px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 24px;
+            letter-spacing: 3px;
+            text-shadow: 0 2px 10px rgba(255,215,0,0.2);
+        }
+
+        .act5-result-comment {
+            max-width: 480px;
+            margin: 0 auto 36px;
+            padding: 24px 28px;
+            background: rgba(0,0,0,0.3);
+            border-left: 3px solid rgba(255,215,0,0.5);
+            border-radius: 0 12px 12px 0;
+            text-align: left;
+        }
+
+        .act5-result-comment-label {
+            font-size: 0.82rem;
+            color: rgba(255,215,0,0.5);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .act5-result-comment-text {
+            font-size: 1.03rem;
+            color: rgba(255,255,255,0.88);
+            line-height: 2;
+            font-style: italic;
+        }
+
+        .act5-result-summary {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 36px;
+            flex-wrap: wrap;
+        }
+
+        .act5-result-chip {
+            padding: 8px 18px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.65);
+        }
+
+        .act5-cert-btn {
+            padding: 16px 48px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(135deg, #ffd700, #b8860b);
+            color: #1a1a1a;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(255,215,0,0.3);
+        }
+
+        .act5-cert-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255,215,0,0.45);
+        }
+    </style>
+</head>
+<body class="act-bg" style="background-image: url('../images/wuhou-guard.jpeg');">
+    
+    <!-- 页面顶部 -->
+    <div class="li-bai-header">
+        <div class="hero-header">
+            <div class="hero-info">
+                <h1 class="hero-name">
+                    <img class="hero-name-avatar" src="../images/zhaoyun-avatar-game.png" alt="赵云">
+                    赵云 · 常山龙胆
+                </h1>
+                <p class="hero-title">龙魂之鉴 · 武道之心</p>
+                
+                <div class="stats-container" id="zhaoyun-stats">
+                    <div class="li-bai-stat">
+                        <div class="stat-icon">💪</div>
+                        <div class="stat-label">勇气</div>
+                        <div class="stat-value" id="stat-courage">-</div>
+                    </div>
+                    <div class="li-bai-stat">
+                        <div class="stat-icon">🛡️</div>
+                        <div class="stat-label">守护</div>
+                        <div class="stat-value" id="stat-guard">-</div>
+                    </div>
+                    <div class="li-bai-stat">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-label">评级</div>
+                        <div class="stat-value" id="stat-rank">-</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="act-indicator">
+                <div class="act-number" id="act-number">5</div>
+                <div class="act-text">第 <span id="act-text">五</span> 幕</div>
+            </div>
+
+            </div>
+        </div>
+    </div>
+    
+    <!-- 主内容区 -->
+    <div class="container">
+        <div class="game-scene">
+            <div class="dialogue-container">
+                <h3 class="scene-title">第五幕 · 龙魂之鉴</h3>
+                
+                <div class="act5-container" id="act5-root">
+                    <!-- 由JS动态渲染 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/common.js"></script>
+    <script>
+    // ================================================================
+    //  第五幕《龙魂之鉴》—— 武魂赋予仪式
+    // ================================================================
+
+    // ---- 从第四幕读取数据 ----
+    let gameData = null;
+
+    function loadGameData() {
+        try {
+            const saved = JSON.parse(localStorage.getItem('zhaoYun_state') || '{}');
+            const act4 = saved.act4_result || null;
+
+            gameData = {
+                victory: act4 ? act4.victory : true,
+                timeLeft: act4 ? act4.timeLeft : 30,
+                guardHealth: act4 ? act4.guardHealth : 2,
+                attackCount: act4 ? act4.attackCount : 5,
+                enemiesBlocked: act4 ? act4.enemiesBlocked : 8,
+                skillUsed: act4 ? act4.skillUsed : 2,
+                courage_reward: act4 ? act4.courage_reward : 2,
+                defense_reward: act4 ? act4.defense_reward : 1,
+                rank: act4 ? act4.rank : 'A'
+            };
+        } catch(e) {
+            console.error('加载数据失败:', e);
+            gameData = {
+                victory: true, timeLeft: 30, guardHealth: 2,
+                attackCount: 5, enemiesBlocked: 8, skillUsed: 2,
+                courage_reward: 2, defense_reward: 1, rank: 'A'
+            };
+        }
+
+        // 更新顶部属性显示
+        document.getElementById('stat-courage').textContent = gameData.courage_reward;
+        document.getElementById('stat-guard').textContent = gameData.defense_reward;
+        document.getElementById('stat-rank').textContent = gameData.rank;
+
+        console.log('Act4数据加载成功:', gameData);
+    }
+
+    // ---- 三轮心法配置 ----
+    const ROUND_CONFIGS = [
+        {
+            title: '守土之志',
+            replayBuilder: (data) => buildReplayText(data, 0),
+            choices: {
+                A: {
+                    tag: '勇进',
+                    title: '「主动出击，以攻代守！」',
+                    desc: '与其被动挨打，不如迎头痛击。最好的防守就是进攻。'
+                },
+                B: {
+                    tag: '守成',
+                    title: '「稳住阵脚，滴水不漏！」',
+                    desc: '守住每一寸阵地，让敌人无机可乘，方为上将之风。'
+                }
+            }
+        },
+        {
+            title: '破阵之势',
+            replayBuilder: (data) => buildReplayText(data, 1),
+            choices: {
+                A: {
+                    tag: '勇进',
+                    title: '「孤注一掷，直取敌首！」',
+                    desc: '擒贼先擒王，集中力量突破要害，速战速决。'
+                },
+                B: {
+                    tag: '守成',
+                    title: '「步步为营，稳扎稳打！」',
+                    desc: '先清外围威胁，确保后方安全后再图进取。'
+                }
+            }
+        },
+        {
+            title: '龙威之现',
+            replayBuilder: (data) => buildReplayText(data, 2),
+            choices: {
+                A: {
+                    tag: '勇进',
+                    title: '「全力以赴，不留后路！」',
+                    desc: '将勇气燃烧到极致，用最猛烈的攻势终结战斗。'
+                },
+                B: {
+                    tag: '守成',
+                    title: '「收放自如，蓄势待发！」',
+                    desc: '掌控节奏，留有余力，以备不时之需。'
+                }
+            }
+        }
+    ];
+
+    // ---- 回放文案生成器 ----
+    function buildReplayText(data, roundIndex) {
+        const d = data;
+
+        switch(roundIndex) {
+            case 0: {
+                // 防守关
+                const blocked = d.enemiesBlocked || 0;
+                const guard = d.guardHealth || 0;
+                return `第一关【防守关】：<span class="hl">格挡战况</span>回顾。<br><br>
+                    你成功格挡了 <span class="hl">${blocked}</span> 次敌方进攻，
+                    完美防守 <span class="hl">${Math.min(Math.floor(blocked / 3), 5)}</span> 次，
+                    剩余守护值 <span class="hl">${guard}</span>。<br><br>
+                    回首来路，吾于长坂坡前寸步不让——此刻汝心中所想为何？`;
+            }
+            case 1: {
+                // 进攻关
+                const atk = d.attackCount || 0;
+                const time = d.timeLeft || 0;
+                const bossHp = Math.max(0, 100 - (atk * 15));
+                return `第二关【进攻关】：<span class="hl">攻城战况</span>回顾。<br><br>
+                    你发动了 <span class="hl">${atk}</span> 次攻击，
+                    剩余时间 <span class="hl">${time}s</span>，
+                    敌方B城剩余血量 <span class="hl">${bossHp}%</span>。<br><br>
+                    敌营在前，B城危在旦夕——吾必须做出决断！`;
+            }
+            case 2: {
+                // 技能关
+                const skill = d.skillUsed || 0;
+                const rank = d.rank || 'B';
+                return `第三关【技能关】：<span class="hl">七进七出</span>战况回顾。<br><br>
+                    你发动龙胆亮银枪冲击 <span class="hl">${skill}</span> 次，
+                    综合评级 <span class="hl">${rank}</span>。<br><br>
+                    龙胆在手，七进七出之势已成——此乃吾武道之心所向！`;
+            }
+            default:
+                return `第${roundIndex+1}关：<span class="hl">关键时刻</span>回顾。`;
+        }
+    }
+
+    // ---- 人格矩阵（8种基础型 × 2种变体 = 16标签）----
+    const PERSONALITY_MATRIX = {
+        AAA: { type: '破阵先锋', comment: '善哉！汝勇往直前，以雷霆之势撕裂一切阻碍。正如吾当年长坂坡七进七出，一马当先，无人能挡。这份锐气，乃大将之风骨也。' },
+        AAB: { type: '常胜将军', comment: '可嘉。汝知何时出击、何时收敛，分寸拿捏得当。攻主守辅，进退自如——此乃常胜之道，非一日之功可成。' },
+        ABA: { type: '常胜将军', comment: '可嘉。汝知何时出击、何时收敛，分寸拿捏得当。攻主守辅，进退自如——此乃常胜之道，非一日之功可成。' },
+        BAA: { type: '常胜将军', comment: '可嘉。汝知何时出击、何时收敛，分寸拿捏得当。攻主守辅，进退自如——此乃常胜之道，非一日之功可成。' },
+        ABB: { type: '铁壁统帅', comment: '妙极。汝以守为本、伺机而动，铜墙铁壁之中暗藏锋芒。最坚固的堡垒，往往藏着最致命的一击——此乃统帅之才也。' },
+        BAB: { type: '铁壁统帅', comment: '妙极。汝以守为本、伺机而动，铜墙铁壁之中暗藏锋芒。最坚固的堡垒，往往藏着最致命的一击——此乃统帅之才也。' },
+        BBA: { type: '铁壁统帅', comment: '妙极。汝以守为本、伺机而动，铜墙铁壁之中暗藏锋芒。最坚固的堡垒，往往藏着最致命的一击——此乃统帅之才也。' },
+        BBB: { type: '磐石之盾',   comment: '善！汝坚如磐石，万夫莫开。不动如山的意志捍卫一切——但切记，盾牌之后亦需有剑之锋芒。吾愿与汝共勉：守护之力，终须化为进取之势。' }
+    };
+
+    // "锐"变体覆盖（勇气远超守护时）
+    const VARIANT_SHARP_OVERRIDES = {
+        '破阵先锋': { type: '龙胆战神',   comment: '天哪！汝之锐气竟与吾当年如出一辙！七进七出，单骑救主——这等气魄，非大勇者不能有！汝便是当世之龙胆，吾愿称汝为知己！' },
+        '常胜将军': { type: '锐锋虎将',   comment: '好！汝于稳健之中更添锋芒，进可攻退可守，且锐意十足。此等将才，千军万马中亦可游刃有余。吾甚慰！' },
+        '铁壁统帅': { type: '金汤猛将',   comment: '奇哉！汝一面固若金汤，一面锐不可当。守中有攻，稳中带狠——这般矛盾又和谐的武道，令吾想起子龙年轻时的模样！' },
+        '磐石之盾': { type: '不动冥王',   comment: '有趣……汝明明坚若磐石，却又隐隐透着一股锐利之气。似静实动，似守实攻——此乃武学之上乘境界也！' }
+    };
+
+    // "稳"变体覆盖（守护远超勇气时）
+    const VARIANT_STEADY_OVERRIDES = {
+        '破阵先锋': { type: '沉稳先锋',   comment: '可嘉。汝虽锐意进取却不失沉稳，冲锋之际仍顾全大局。比起当年的吾，汝更多了几分老将的风范——这是好事。' },
+        '常胜将军': { type: '稳健良将',   comment: '善。汝行事周密，步步为营。每一步都算无遗策，稳扎稳打中见真章。此乃大将之稳重本色，假以时日必有所成。' },
+        '铁壁统帅': { type: '磐石统御',   comment: '极好！汝防御之术已达化境，滴水不漏，固若金汤。有汝坐镇军中，三军皆安——此乃真正的国之柱石。' },
+        '磐石之盾': { type: '不灭壁垒',   comment: '绝矣！汝之意志如山岳般不可撼动，任凭风吹雨打，自岿然不动。吾愿称汝为——天下第一守将！' }
+    };
+
+    // ---- 状态管理 ----
+    let currentRound = 0;
+    let choices = [];
+
+    // ---- 页面初始化 ----
+    document.addEventListener('DOMContentLoaded', function() {
+        clearActStateOnFreshEntry('zhaoState');
+        loadGameData();
+        renderIntro();
+    });
+
+    // ===== 渲染函数 =====
+
+    /** 开场画面 */
+    function renderIntro() {
+        const root = document.getElementById('act5-root');
+        root.innerHTML = `
+            <div class="act5-intro">
+                <div class="act5-intro-icon">🐉</div>
+                <div class="act5-intro-title">龙 魂 之 鉴</div>
+                <div class="act5-intro-subtitle">
+                    战鼓渐息，硝烟散尽。<br>
+                    赵云立于长坂坡前，回首来路——<br>
+                    那七进七出的身影，那护主突围的誓言，皆已刻入龙魂深处。<br>
+                    如今，武魂之镜已然展开，<br>
+                    它将映照出你真正的<b>武者之道</b>。
+                </div>
+                <button class="act5-intro-btn" onclick="startReview()">开始鉴心</button>
+            </div>
+        `;
+    }
+
+    /** 进入回顾流程 */
+    function startReview() {
+        currentRound = 0;
+        choices = [];
+        renderRound();
+    }
+
+    /** 渲染某一轮 */
+    function renderRound() {
+        const root = document.getElementById('act5-root');
+        const cfg = ROUND_CONFIGS[currentRound];
+        if (!cfg) { showResult(); return; }
+
+        const replayText = cfg.replayBuilder(gameData);
+
+        // 进度条
+        let dotsHtml = '';
+        for (let i = 0; i < 3; i++) {
+            let cls = 'act5-progress-dot';
+            if (i < currentRound) cls += ' done';
+            else if (i === currentRound) cls += ' current';
+            dotsHtml += `<div class="${cls}"></div>`;
+        }
+
+        root.innerHTML = `
+            <div class="act5-round active">
+                <div class="act5-round-header">
+                    <div class="act5-round-num">⚔ 第 ${currentRound + 1} 关 · ${cfg.title}</div>
+                    <div class="act5-round-progress">${dotsHtml}</div>
+                </div>
+                <div class="act5-round-body">
+                    <div class="act5-replay-card">
+                        <div class="act5-replay-label">📜 战况回放</div>
+                        <div class="act5-replay-text">${replayText}</div>
+                    </div>
+                    <div class="act5-choice-panel">
+                        <div class="act5-choice-label">💡 武道抉择</div>
+                        <div class="act5-choice-btn choice-a" onclick="makeChoice('A')">
+                            <div class="act5-choice-tag">${cfg.choices.A.tag}</div>
+                            <div class="act5-choice-title">${cfg.choices.A.title}</div>
+                            <div class="act5-choice-desc">${cfg.choices.A.desc}</div>
+                        </div>
+                        <div class="act5-choice-btn choice-b" onclick="makeChoice('B')">
+                            <div class="act5-choice-tag">${cfg.choices.B.tag}</div>
+                            <div class="act5-choice-title">${cfg.choices.B.title}</div>
+                            <div class="act5-choice-desc">${cfg.choices.B.desc}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    /** 做出选择（★ 修复：不再依赖隐式event对象） */
+    function makeChoice(choice) {
+        choices.push(choice);
+
+        // 视觉反馈
+        const btns = document.querySelectorAll('.act5-choice-btn');
+        btns.forEach(b => b.classList.remove('selected'));
+        const selectedBtn = document.querySelector(`.choice-${choice.toLowerCase()}`);
+        if (selectedBtn) selectedBtn.classList.add('selected');
+
+        // 短暂延迟后进入下一轮或结果
+        setTimeout(() => {
+            currentRound++;
+            if (currentRound >= 3) {
+                showResult();
+            } else {
+                renderRound();
+            }
+        }, 600);
+    }
+
+    /** 计算人格结果 */
+    function calculatePersonality() {
+        // 选择组合字符串 e.g. "AAB"
+        const combo = choices.join('');
+        
+        // 基础人格（从矩阵）
+        let base = PERSONALITY_MATRIX[combo];
+        if (!base) base = PERSONALITY_MATRIX['AAB']; // fallback
+
+        // ★ 变体判定：基于勇气/守护比值
+        const courage = gameData.courage_reward || 0;
+        const guard = gameData.defense_reward || 0;
+        const totalAttr = courage + guard;
+
+        let finalType, finalComment;
+
+        if (totalAttr > 0) {
+            const courageRatio = courage / totalAttr;
+            
+            if (courageRatio >= 0.67 && courage > guard * 1.5) {
+                // 勇气压倒性优势 → "锐"变体
+                const override = VARIANT_SHARP_OVERRIDES[base.type];
+                if (override) {
+                    finalType = override.type;
+                    finalComment = override.comment;
+                } else {
+                    finalType = base.type;
+                    finalComment = base.comment;
+                }
+            } else if (guard > courage * 1.5) {
+                // 守护压倒性优势 → "稳"变体
+                const override = VARIANT_STEADY_OVERRIDES[base.type];
+                if (override) {
+                    finalType = override.type;
+                    finalComment = override.comment;
+                } else {
+                    finalType = base.type;
+                    finalComment = base.comment;
+                }
+            } else {
+                // 接近均衡 → 保持原标签
+                finalType = base.type;
+                finalComment = base.comment;
+            }
+        } else {
+            finalType = base.type;
+            finalComment = base.comment;
+        }
+
+        // 确定变体名称
+        let variantLabel = '均衡';
+        if (courage > guard * 1.5) variantLabel = '锐';
+        else if (guard > courage * 1.5) variantLabel = '稳';
+
+        const scoreA = choices.filter(c => c === 'A').length;
+        const scoreB = choices.filter(c => c === 'B').length;
+
+        return {
+            combo,
+            type: finalType,
+            variant: variantLabel,
+            comment: finalComment,
+            aCount: scoreA,
+            bCount: scoreB,
+            courage: courage,
+            guard: guard,
+            rank: gameData.rank,
+            enemiesBlocked: gameData.enemiesBlocked,
+            attackCount: gameData.attackCount,
+            skillUsed: gameData.skillUsed
+        };
+    }
+
+    /** 显示结果页 */
+    function showResult() {
+        const result = calculatePersonality();
+        const root = document.getElementById('act5-root');
+
+        root.innerHTML = `
+            <div class="act5-result active">
+                <div class="act5-result-banner">— 武魂判定 —</div>
+                <div class="act5-result-tag">${result.type}<span style="font-size:0.7em;margin-left:8px;color:rgba(255,215,0,0.7)">「${result.variant}」</span></div>
+                
+                <div class="act5-result-comment">
+                    <div class="act5-result-comment-label">⚔️ 赵云评语</div>
+                    <div class="act5-result-comment-text">"${result.comment}"</div>
+                </div>
+
+                <div class="act5-result-summary">
+                    <div class="act5-result-chip">选择组合：${result.combo}</div>
+                    <div class="act5-result-chip">勇进 ${result.aCount} · 守成 ${result.bCount}</div>
+                    <div class="act5-result-chip">💪 勇气 ${result.courage} · 🛡️ 守护 ${result.guard}</div>
+                    <div class="act5-result-chip">第四幕评级：${result.rank}</div>
+                </div>
+
+                <button class="act5-cert-btn" onclick="goToCert()">📜 揭晓武魂</button>
+            </div>
+        `;
+
+        // 将结果存入全局供证书页使用
+        window.__act5Result = result;
+
+        // 保存游魂数据
+        saveSoulData('zhaoYun', {
+            act: 5,
+            personality: result.type,
+            variant: result.variant,
+            scores: { A: result.aCount, B: result.bCount },
+            attributes: { courage: result.courage, guard: result.guard },
+            choices: result.combo.split('')
+        });
+    }
+
+    /** 跳转证书页 */
+    function goToCert() {
+        // 标记赵云线通关（第五幕完成）
+        saveProgress('zhaoYun', 5);
+        checkAllHeroesAchievement();
+        unlockAchievement('zhao_complete', '常胜将军', '完成赵云线全五幕通关', '⚔️');
+        
+        const r = window.__act5Result;
+        if (!r) { goToCertFallback(); return; }
+
+        const params = new URLSearchParams({
+            hero: '赵云',
+            title: r.type,
+            courage: r.courage || 0,
+            guard: r.guard || 0,
+            personalityTag: r.type,
+            variant: r.variant,
+            comment: r.comment
+        });
+        window.location.href = '../certificate.html?' + params.toString();
+    }
+
+    /** 无结果时的降级跳转 */
+    function goToCertFallback() {
+        const params = new URLSearchParams({
+            hero: '赵云',
+            title: '龙胆虎将',
+            courage: gameData.courage_reward || 0,
+            guard: gameData.defense_reward || 0
+        });
+        window.location.href = '../certificate.html?' + params.toString();
+    }
+    </script>
+    <script src="../js/level-select.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', () => LevelSelect.initPanel('zhaoYun', 5));</script>
+</body>
+</html>
