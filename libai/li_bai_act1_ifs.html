@@ -12,50 +12,45 @@
     
     <!-- 李白线公共CSS -->
     <link rel="stylesheet" href="../css/hero-styles.css">
+    <!-- 选关系统CSS -->
+    <link rel="stylesheet" href="../css/level-select.css">
 </head>
-<body class="act-bg" style="background-image: url('../images/ifs-mall.jpeg');">
-    <!-- 页面顶部 -->
+<body class="act-bg has-notebook" style="background-image: url('../images/ifs-mall.jpeg');">
+    <!-- 页面顶部 — 固定顶栏 -->
     <div class="li-bai-header">
-        <div class="container">
-            <div class="hero-header">
-                <div class="hero-info">
-                    <h1 class="hero-name">
-                        <span class="hero-name-icon">🍷</span>
-                        李白 · 青莲剑仙
-                    </h1>
-                    <p class="hero-title">诗酒剑意 · 成都IFS机甲诗会</p>
-                    
-                    <div class="stats-container" id="li-bai-stats">
-                        <!-- 状态数据会由JavaScript动态更新 -->
-                        <div class="li-bai-stat">
-                            <div class="stat-icon">📜</div>
-                            <div class="stat-label">诗心</div>
-                            <div class="stat-value" id="stat-poetry">0</div>
-                        </div>
-                        <div class="li-bai-stat">
-                            <div class="stat-icon">🍶</div>
-                            <div class="stat-label">酒意</div>
-                            <div class="stat-value" id="stat-wine">0</div>
-                        </div>
-                        <div class="li-bai-stat">
-                            <div class="stat-icon">🎯</div>
-                            <div class="stat-label">探索</div>
-                            <div class="stat-value" id="stat-explored">0/2</div>
-                        </div>
-                    </div>
+        <div class="hero-header">
+            <div class="hero-info">
+                <h1 class="hero-name">
+                    <img class="hero-name-avatar" src="../images/libai-avatar-game.png" alt="李白">
+                    李白 · 青莲剑仙
+                </h1>
+                <p class="hero-title">诗酒剑意 · 成都IFS机甲诗会</p>
+            </div>
+
+            <div class="stats-container" id="li-bai-stats">
+                <div class="li-bai-stat">
+                    <div class="stat-icon">📜</div>
+                    <div class="stat-label">诗心</div>
+                    <div class="stat-value" id="stat-poetry">0</div>
                 </div>
-                
-                <div class="act-indicator">
-                    <div class="act-number" id="act-number">1</div>
-                    <div class="act-text">第 <span id="act-text">一</span> 幕</div>
+                <div class="li-bai-stat">
+                    <div class="stat-icon">🍶</div>
+                    <div class="stat-label">酒意</div>
+                    <div class="stat-value" id="stat-wine">0</div>
+                </div>
+                <div class="li-bai-stat">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-label">探索</div>
+                    <div class="stat-value" id="stat-explored">0/2</div>
                 </div>
             </div>
-            
-            <div style="text-align: center; margin-top: 20px;">
-                <button class="btn btn-secondary" data-action="go-home">
-                    ← 返回首页
-                </button>
+
+            <div class="act-indicator">
+                <div class="act-number" id="act-number">1</div>
+                <div class="act-text">第 <span id="act-text">一</span> 幕</div>
             </div>
+
+            <!-- 返回首页按钮已移除，由选关面板取代 -->
         </div>
     </div>
     
@@ -80,6 +75,10 @@
     <!-- 引用公共JavaScript -->
     <script src="../js/common.js"></script>
     
+    <!-- 选关系统JS -->
+    <script src="../js/level-select.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', () => LevelSelect.initPanel('liBai', 1));</script>
+    
     <!-- 李白线特有JavaScript -->
     <script>
         // 李白线状态变量
@@ -93,7 +92,7 @@
                 option1: false,
                 option2: false
             },
-            isGameStarted: false          // 游戏是否已经开始
+            _isAnswering: false             // 防重复点击锁
         };
         
 
@@ -102,16 +101,7 @@
         
         document.addEventListener('DOMContentLoaded', function() {
             console.log('李白线页面已加载');
-            console.log('dialogue-scene元素:', document.getElementById('dialogue-scene'));
-            console.log('dialogue-log元素:', document.getElementById('dialogue-log'));
-            console.log('gameState:', gameState);
-            
-            // 直接添加一个测试消息，确保页面显示正常
-            const dialogueLog = document.getElementById('dialogue-log');
-            if (dialogueLog) {
-                console.log('dialogue-log元素存在，高度:', dialogueLog.offsetHeight);
-            }
-            
+
             // 如果是fresh进入，清除旧状态使对话从头开始
             clearActStateOnFreshEntry('liBaiState');
             
@@ -121,11 +111,7 @@
             // 开始第一幕
             startLiBaiFirstAct();
             
-            // 绑定事件
             bindLiBaiEvents();
-            
-            // 确保页面可见
-            document.body.style.display = 'block';
         });
         
         // ==================== 状态管理 ====================
@@ -194,38 +180,107 @@
             document.getElementById('act-text').textContent = actText;
         }
         
+        // ==================== 打字机队列系统 ====================
+        
+        let _typeQueue = [];
+        let _isTyping = false;
+        
+        // 等待打字机队列完全空闲（防止选项在打字中途弹出）
+        function waitForTypeQueueEmpty() {
+            return new Promise(resolve => {
+                function check() {
+                    if (_typeQueue.length === 0 && !_isTyping) {
+                        resolve();
+                    } else {
+                        setTimeout(check, 50);
+                    }
+                }
+                check();
+            });
+        }
+        
+        function _processTypeQueue() {
+            if (_isTyping || _typeQueue.length === 0) return;
+            _isTyping = true;
+            
+            const job = _typeQueue.shift();
+            document.body.classList.add('typing-active');
+            document.body.classList.remove('choice-showing', 'choice-hovering');  /* 打字开始 → 移除选项亮化 */
+            job.messageDiv.classList.add('li-bai-message-typing');
+            
+            let charIndex = 0;
+            const pureTextLength = job.rawText.replace(/<[^>]*>/g, '').length;
+            const baseSpeed = pureTextLength < 20 ? 80 : (pureTextLength < 50 ? 55 : 45);
+            
+            function typeNextChar() {
+                if (charIndex >= job.rawChars.length) {
+                    // 打字完成
+                    job.cursorSpan.style.display = 'none';
+                    job.messageDiv.classList.remove('li-bai-message-typing');
+                    
+                    if (_typeQueue.length === 0) {
+                        document.body.classList.remove('typing-active');
+                        _isTyping = false;
+                    } else {
+                        _processTypeQueue();  // 立即处理下一条
+                    }
+                    
+                    // ★关键修复★ 用完整HTML回填：innerHTML逐步拼接会导致浏览器
+                    // 自动闭合未闭合标签，使 keyword span 变空、文字外泄
+                    job.targetSpan.innerHTML = job.rawText;
+
+                    // 刷新关键词绑定（打字机动态生成innerHTML后需要重新扫描）
+                    if (typeof refreshKeywordSpans === 'function') refreshKeywordSpans();
+                    
+                    job.resolve();
+                    return;
+                }
+                
+                const item = job.rawChars[charIndex++];
+                job.targetSpan.innerHTML += item.value;
+                
+                const dialogueLog = document.getElementById('dialogue-log');
+                dialogueLog.scrollTop = dialogueLog.scrollHeight;
+                
+                let delay = baseSpeed;
+                if (item.type === 'char' && '，。！？、；：'.includes(item.value)) delay = baseSpeed + 150;
+                else if (item.type === 'char' && item.value === ' ') delay = baseSpeed - 10;
+                
+                setTimeout(typeNextChar, delay);
+            }
+            
+            setTimeout(typeNextChar, 100);
+        }
+        
         // ==================== 剧情逻辑 ====================
         
         // 李白线第一幕开始
-        function startLiBaiFirstAct() {
+        async function startLiBaiFirstAct() {
             liBaiState.currentAct = 1;
             liBaiState.currentStep = 'opening';
             liBaiState.exploredOptions = { option1: false, option2: false };
-            liBaiState.isGameStarted = true;
+            liBaiState.actPoetryChoices = 0;   // ★ 每幕重置
+            liBaiState.actWineChoices = 0;      // ★ 每幕重置
+            liBaiState._isAnswering = false;    // ★ 防重复锁重置
             
             // 清空对话日志
             const dialogueLog = document.getElementById('dialogue-log');
             dialogueLog.innerHTML = '';
             
-            // 确保剧情场景显示
-            document.getElementById('dialogue-scene').style.display = 'block';
-            
             // 更新状态显示
             updateLiBaiStats();
             
             // 播放开场白
-            addLiBaiDialogue("小子，随我来！前方乃是成都IFS，吾等诗仙与机甲共舞之地。睁大眼睛，此地万般精彩，足供你写个长篇！", '李白');
+            await addLiBaiDialogue("小子，随我来！前方乃是成都IFS，吾等诗仙与机甲共舞之地。睁大眼睛，此地万般精彩，足供你写个长篇！你看那<span class=\"keyword\" data-id=\"libai_1_1\" data-name=\"机甲的光芒\">机甲的光芒</span>，如潮水般浮在夜空，<b>像不像一句诗</b>？", '李白');
             
-            // 延迟进入探索阶段
-            setTimeout(() => {
-                liBaiState.currentStep = 'explore';
-                enterExploreStep();
-            }, 2000);
+            // 进入探索阶段
+            liBaiState.currentStep = 'explore';
+            await enterExploreStep();
             
             saveLiBaiState();
         }
         
-        // 添加李白线对话
+        // 添加李白线对话（带真实逐字打字机效果 + 队列串行）
         function addLiBaiDialogue(text, speaker) {
             const dialogueLog = document.getElementById('dialogue-log');
             
@@ -233,11 +288,9 @@
             messageDiv.className = speaker === '李白' ? 'li-bai-message' : 'player-message';
             
             const speakerName = speaker === '李白' ? '李白' : '玩家';
-            messageDiv.innerHTML = `<strong>${speakerName}：</strong> ${text}`;
+            messageDiv.innerHTML = `<strong>${speakerName}：</strong> <span class="type-target"></span><span class="type-cursor">▍</span>`;
             
             dialogueLog.appendChild(messageDiv);
-            
-            // 自动滚动到底部
             dialogueLog.scrollTop = dialogueLog.scrollHeight;
             
             // 确保对话历史已初始化
@@ -259,11 +312,64 @@
             } catch (error) {
                 console.error('保存对话历史失败:', error);
             }
+            
+            const targetSpan = messageDiv.querySelector('.type-target');
+            const cursorSpan = messageDiv.querySelector('.type-cursor');
+            
+            // 非李白消息：直接显示，返回已完成的 Promise
+            if (speaker !== '李白') {
+                targetSpan.innerHTML = text;
+                cursorSpan.style.display = 'none';
+                return Promise.resolve();
+            }
+            
+            // 李白消息：入队并返回 Promise
+            const rawChars = [];
+            let i = 0;
+            while (i < text.length) {
+                if (text[i] === '<') {
+                    let tagEnd = text.indexOf('>', i);
+                    if (tagEnd === -1) tagEnd = text.length;
+                    rawChars.push({ type: 'tag', value: text.slice(i, tagEnd + 1) });
+                    i = tagEnd + 1;
+                } else {
+                    rawChars.push({ type: 'char', value: text[i] });
+                    i++;
+                }
+            }
+            
+            return new Promise(resolve => {
+                _typeQueue.push({ targetSpan, cursorSpan, messageDiv, rawChars, rawText: text, resolve });
+                _processTypeQueue();
+            });
+        }
+        
+        // ==================== 思考气泡 ====================
+        
+        // 思考气泡 — 舞台指示风格
+        function addThinkingBubble(text) {
+            const dialogueLog = document.getElementById('dialogue-log');
+            const div = document.createElement('div');
+            div.className = 'li-bai-thinking';
+            div.textContent = text;
+            dialogueLog.appendChild(div);
+            dialogueLog.scrollTop = dialogueLog.scrollHeight;
+            
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    div.classList.add('thinking-fade-out');
+                    setTimeout(() => {
+                        div.remove();
+                        resolve();
+                    }, 500);
+                }, 1600);
+            });
         }
         
         // 进入探索阶段
-        function enterExploreStep() {
-            addLiBaiDialogue("现在轮到你探索了。看看这IFS机甲展，有什么想问的？", '李白');
+        async function enterExploreStep() {
+            await addLiBaiDialogue("现在轮到你探索了。看看这IFS机甲展，有什么想问的？", '李白');
+            await waitForTypeQueueEmpty();
             updateLiBaiOptions();
         }
         
@@ -284,7 +390,15 @@
             switch(liBaiState.currentStep) {
                 case 'explore':
                     btn1.textContent = "这鲁班机甲如此巨大，师傅可知它有何特别？";
+                    btn1.setAttribute('data-type', 'poem');
+                    btn1.setAttribute('data-mood', 'rational');
+                    btn1.setAttribute('data-risk', 'low');
+                    
                     btn2.textContent = "这里人山人海，比长安西市还热闹！";
+                    btn2.setAttribute('data-type', 'wine');
+                    btn2.setAttribute('data-mood', 'emotional');
+                    btn2.setAttribute('data-risk', 'high');
+                    
                     btn3.textContent = "畅饮美酒";
                     
                     // 禁用已探索的选项
@@ -306,7 +420,9 @@
                     
                 case 'quiz':
                     btn1.textContent = "在成都IFS七层！";
+                    btn1.setAttribute('data-risk', 'low');        // ★ 正确=绿
                     btn2.textContent = "在武侯祠旁边…";
+                    btn2.setAttribute('data-risk', 'high');       // ★ 错误=红
                     btn3.textContent = "畅饮美酒";
                     btn3.style.display = 'none';
                     
@@ -316,8 +432,26 @@
                     
                 case 'choice':
                     btn1.textContent = "此景壮丽，当赋诗一首！";
+                    btn1.setAttribute('data-type', 'poem');
+                    btn1.setAttribute('data-mood', 'rational');
+                    btn1.setAttribute('data-risk', 'low');
+                    
                     btn2.textContent = "走，师傅，咱们寻那酒肉香气去！";
+                    btn2.setAttribute('data-type', 'wine');
+                    btn2.setAttribute('data-mood', 'emotional');
+                    btn2.setAttribute('data-risk', 'high');
+                    
                     btn3.textContent = "前往下一站";
+                    
+                    // 检查选择次数上限（每幕最多2次）
+                    if (liBaiState.actPoetryChoices >= 2) {
+                        btn1.disabled = true;
+                        btn1.style.opacity = '0.5';
+                    }
+                    if (liBaiState.actWineChoices >= 2) {
+                        btn2.disabled = true;
+                        btn2.style.opacity = '0.5';
+                    }
                     
                     // 如果已经做出了选择，显示第三个按钮
                     if (liBaiState.poetryCount > 0 || liBaiState.wineCount > 0) {
@@ -336,47 +470,48 @@
             optionsContainer.appendChild(btn2);
             optionsContainer.appendChild(btn3);
             
+            document.body.classList.add('choice-showing');  /* 选项渲染完 → 背景变亮 */
             updateLiBaiStats();
         }
         
         // 探索选项1
-        function exploreOption1() {
-            addLiBaiDialogue("这鲁班机甲如此巨大，师傅可知它有何特别？", '玩家');
+        async function exploreOption1() {
+            // ★ 李白说话时立即隐藏选项
+            document.getElementById('li-bai-options').innerHTML = '';
+            await addLiBaiDialogue("这鲁班机甲如此巨大，师傅可知它有何特别？", '玩家');
             
-            setTimeout(() => {
-                addLiBaiDialogue("哈哈！小子好眼光！此乃鲁班七号首展，由顶尖团队耗时两年打造，全身可动关节多达数百处，光是编程代码就写了十万行！", '李白');
-            }, 800);
+            await addThinkingBubble("李白凑近机甲，仰头打量了片刻。");     // ★ 思考
+            
+            await addLiBaiDialogue("哈哈！小子好眼光！此乃鲁班七号首展，由顶尖团队耗时两年打造，全身可动关节多达数百处，光是编程代码就写了十万行！那灯光亮起时，如<span class=\"keyword\" data-id=\"libai_1_2\" data-name=\"春江潮水\">春江潮水</span>般流动，照得整座楼如<span class=\"keyword\" data-id=\"libai_1_3\" data-name=\"远峰巍峨\">远峰巍峨</span>。", '李白');
             
             liBaiState.exploredOptions.option1 = true;
             updateLiBaiStats();
             
-            setTimeout(() => {
-                checkAllExplored();
-            }, 1500);
+            checkAllExplored();
             
             saveLiBaiState();
         }
         
         // 探索选项2
-        function exploreOption2() {
-            addLiBaiDialogue("这里人山人海，比长安西市还热闹！", '玩家');
+        async function exploreOption2() {
+            // ★ 李白说话时立即隐藏选项
+            document.getElementById('li-bai-options').innerHTML = '';
+            await addLiBaiDialogue("这里人山人海，比长安西市还热闹！", '玩家');
             
-            setTimeout(() => {
-                addLiBaiDialogue("不错，此地乃西南首个王者荣耀机甲主题展，自开幕来游客络绎不绝。你看那边，连老太太都戴着李信面具拍照呢！", '李白');
-            }, 800);
+            await addThinkingBubble("李白环顾四周人群，捻须笑了笑。");     // ★ 思考
+            
+            await addLiBaiDialogue("不错，此地乃西南首个王者荣耀机甲主题展，自开幕来游客络绎不绝。你看那边，连老太太都戴着李信面具拍照呢！我观这人潮，<b>如潮水</b>般涌去又连起，热闹终会落幕，唯有<b>诗酒长存</b>。", '李白');
             
             liBaiState.exploredOptions.option2 = true;
             updateLiBaiStats();
             
-            setTimeout(() => {
-                checkAllExplored();
-            }, 1500);
+            checkAllExplored();
             
             saveLiBaiState();
         }
         
         // 检查是否所有探索都已完成
-        function checkAllExplored() {
+        async function checkAllExplored() {
             const exploredCount = (liBaiState.exploredOptions.option1 ? 1 : 0) + 
                                  (liBaiState.exploredOptions.option2 ? 1 : 0);
             
@@ -386,99 +521,139 @@
                     enterQuizStep();
                 }, 1000);
             } else {
+                await waitForTypeQueueEmpty();
                 updateLiBaiOptions();
             }
         }
         
         // 验证阶段入口
-        function enterQuizStep() {
-            setTimeout(() => {
-                addLiBaiDialogue("小子，记性如何？方才说的'鲁班首展'，在何处举办？", '李白');
-                liBaiState.currentStep = 'quiz';
-                updateLiBaiOptions();
-            }, 1000);
-            
+        async function enterQuizStep() {
+            await addLiBaiDialogue("小子，记性如何？方才说的'鲁班首展'，在何处举办？", '李白');
+            liBaiState.currentStep = 'quiz';
+            await waitForTypeQueueEmpty();
+            updateLiBaiOptions();
+
             saveLiBaiState();
         }
-        
+
         // 知识验证回答
-        function quizAnswer(isCorrect) {
+        async function quizAnswer(isCorrect) {
+            if (liBaiState._isAnswering) return;          // ★ 防重复
+            liBaiState._isAnswering = true;               // ★ 加锁
+
+            // ★ 立即隐藏选项容器，防止打字期间重复点击
+            document.getElementById('li-bai-options').innerHTML = '';
+
             if (isCorrect) {
-                addLiBaiDialogue("在成都IFS七层！", '玩家');
-                
-                setTimeout(() => {
-                    addLiBaiDialogue("记性不差！IFS七层确实是个好地方。", '李白');
-                    liBaiState.quizScore += 1;
-                }, 800);
+                await addLiBaiDialogue("在成都IFS七层！", '玩家');
+
+                await addThinkingBubble("李白眼睛一亮，点头赞许。");     // ★ 思考
+
+                await addLiBaiDialogue("记性不差！IFS七层确实是个好地方。", '李白');
+                liBaiState.quizScore += 1;
             } else {
-                addLiBaiDialogue("在武侯祠旁边…", '玩家');
-                
-                setTimeout(() => {
-                    addLiBaiDialogue("哈哈，罚你多看两眼！正解是IFS七层。", '李白');
-                }, 800);
+                await addLiBaiDialogue("在武侯祠旁边…", '玩家');
+
+                await addThinkingBubble("李白摇头，轻轻叹了口气。");     // ★ 思考
+
+                await addLiBaiDialogue("哈哈，罚你多看两眼！正解是IFS七层。", '李白');
             }
-            
-            setTimeout(() => {
-                liBaiState.currentStep = 'choice';
-                enterChoiceStep();
-            }, 1500);
-            
+
+            liBaiState.currentStep = 'choice';
+            await enterChoiceStep();
+
             saveLiBaiState();
         }
         
         // 终极选择阶段入口
-        function enterChoiceStep() {
-            setTimeout(() => {
-                addLiBaiDialogue("那么此情此景，在你心中，是更偏诗篇，还是更近江湖？", '李白');
-                liBaiState.currentStep = 'choice';
-                updateLiBaiOptions();
-            }, 1000);
-            
+        async function enterChoiceStep() {
+            await addLiBaiDialogue("那么此情此景，在你心中，是更偏诗篇，还是更近江湖？", '李白');
+            liBaiState.currentStep = 'choice';
+            await waitForTypeQueueEmpty();
+            updateLiBaiOptions();
+
             saveLiBaiState();
         }
-        
+
         // 最终选择
-        function finalChoice(type) {
-            if (type === 'poetry') {
-                addLiBaiDialogue("此景壮丽，当赋诗一首！", '玩家');
-                
-                setTimeout(() => {
-                    addLiBaiDialogue("好！诗心初成，不负此景！", '李白');
-                    if (!liBaiState._locked) liBaiState.poetryCount += 1;
-                }, 800);
-            } else {
-                addLiBaiDialogue("走，师傅，咱们寻那酒肉香气去！", '玩家');
-                
-                setTimeout(() => {
-                    addLiBaiDialogue("哈哈！酒意已生，痛快！", '李白');
-                    if (!liBaiState._locked) liBaiState.wineCount += 1;
-                }, 800);
+        async function finalChoice(type) {
+            // ★ 李白说话时立即隐藏选项，防止重复点击
+            document.getElementById('li-bai-options').innerHTML = '';
+
+            // 检查选择次数限制（每幕每种最多2次）
+            if (type === 'poetry' && liBaiState.actPoetryChoices >= 2) {
+                await addLiBaiDialogue("此景壮丽，当赋诗一首！", '玩家');
+                await addLiBaiDialogue("诗心已盈满，再选便落俗了。换条路走吧！", '李白');
+                await waitForTypeQueueEmpty();
+                updateLiBaiOptions();
+                return;
             }
-            
+            if (type === 'wine' && liBaiState.actWineChoices >= 2) {
+                await addLiBaiDialogue("走，师傅，咱们寻那酒肉香气去！", '玩家');
+                await addLiBaiDialogue("酒意已酣畅，再饮怕是要醉了。换个方向？", '李白');
+                await waitForTypeQueueEmpty();
+                updateLiBaiOptions();
+                return;
+            }
+
+            if (type === 'poetry') {
+                liBaiState.actPoetryChoices += 1;
+
+                await addLiBaiDialogue("此景壮丽，当赋诗一首！", '玩家');
+
+                await addThinkingBubble("李白抚掌，面露欣慰之色。");     // ★ 思考
+
+                if (liBaiState.actPoetryChoices === 1) {
+                    // 第1次：正常回复
+                    await addLiBaiDialogue("好！诗心初成，不负此景！记住此刻，日后对诗时，心中要有山水。", '李白');
+                } else {
+                    // 第2次：彩蛋回复 + 成就
+                    await addLiBaiDialogue("哦？又是赋诗！你这诗心，倒比吾当年还急切几分…不过也好，诗贵在勤！", '李白');
+                    if (typeof unlockAchievement === 'function') unlockAchievement('libai_poetry_repeat');
+                }
+                if (!liBaiState._locked) liBaiState.poetryCount += 1;
+            } else {
+                liBaiState.actWineChoices += 1;
+
+                await addLiBaiDialogue("走，师傅，咱们寻那酒肉香气去！", '玩家');
+
+                await addThinkingBubble("李白闻言大笑，拍了一下你的肩膀。");  // ★ 思考
+
+                if (liBaiState.actWineChoices === 1) {
+                    // 第1次：正常回复
+                    await addLiBaiDialogue("哈哈！酒意已生，痛快！酒入豪肠，对仗时才有胆气。", '李白');
+                } else {
+                    // 第2次：彩蛋回复 + 成就
+                    await addLiBaiDialogue("又是酒！小子倒是与吾志趣相投…只是这酒量，可别输给诗才！", '李白');
+                    if (typeof unlockAchievement === 'function') unlockAchievement('libai_wine_repeat');
+                }
+                if (!liBaiState._locked) liBaiState.wineCount += 1;
+            }
+
             // 保存状态
             saveLiBaiState();
-            
-            setTimeout(() => {
-                // 显示第三个按钮（前往下一站）
-                updateLiBaiOptions();
-            }, 1500);
+
+            // 显示第三个按钮（前往下一站）
+            await waitForTypeQueueEmpty();
+            updateLiBaiOptions();
         }
         
         // 前往下一场景（第二幕）
-        function nextScene() {
-            addLiBaiDialogue("前往下一站", '玩家');
+        async function nextScene() {
+            await addLiBaiDialogue("前往下一站", '玩家');
+
+            await addThinkingBubble("李白转身望向远处，袖子一甩。");    // ★ 思考
+
+            await addLiBaiDialogue("好！下一站是宽窄巷子的鲁班茶肆，走！", '李白');
             
-            setTimeout(() => {
-                addLiBaiDialogue("好！下一站是宽窄巷子的鲁班茶肆，走！", '李白');
-                
-                // 保存进度到第2幕
-                saveProgress('liBai', 2);
-                
-                // 跳转到第二幕
-                window.location.href = "li_bai_act2_kuanzhai.html";
-            }, 800);
+            // 保存进度到第2幕
+            saveProgress('liBai', 2);
             
+            // 保存李白线状态
             saveLiBaiState();
+            
+            // 跳转到第二幕
+            window.location.href = "li_bai_act2_kuanzhai.html";
         }
         
 
@@ -487,11 +662,36 @@
         
         function bindLiBaiEvents() {
             // 返回首页按钮
-            const backHomeBtn = document.querySelector('[data-action="go-home"]');
-            if (backHomeBtn) {
-                backHomeBtn.addEventListener('click', goHome);
+            // 返回首页按钮已移除（选关面板取代）
+            
+            // 选项悬停情感暗示 + 点击反馈
+            const optionsContainer = document.getElementById('li-bai-options');
+            if (optionsContainer) {
+                // 悬停事件 - 背景色调变化
+                optionsContainer.addEventListener('mouseover', function(e) {
+                    const btn = e.target.closest('.li-bai-option');
+                    if (!btn || btn.disabled) return;
+                    document.body.classList.add('choice-hovering');  /* 悬停选项 → 环境光提亮 */
+                    const mood = btn.getAttribute('data-mood');
+                    if (mood === 'rational') {
+                        document.body.classList.add('choice-hover-rational');
+                    } else if (mood === 'emotional') {
+                        document.body.classList.add('choice-hover-emotional');
+                    }
+                });
+                optionsContainer.addEventListener('mouseout', function(e) {
+                    const btn = e.target.closest('.li-bai-option');
+                    if (!btn) return;
+                    document.body.classList.remove('choice-hovering', 'choice-hover-rational', 'choice-hover-emotional');
+                });
             }
+            // 初始化游蜀笔记关键词系统
+            if (typeof initNotebook === 'function') initNotebook();
+            if (typeof refreshKeywordSpans === 'function') refreshKeywordSpans();
         }
     </script>
+    <!-- 游蜀笔记侧边栏 -->
+    <div class="notebook-sidebar" id="notebook-sidebar"></div>
+    <script src="../js/notebook.js"></script>
 </body>
 </html>

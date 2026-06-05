@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>赵云线 · 龙魂之鉴</title>
+    <title>诸葛亮线 · 游蜀拜师录</title>
     <link rel="icon" type="image/svg+xml" href="../genie.svg">
-    <meta name="description" content="赵云线第五幕 - 龙魂之鉴">
+    <meta name="description" content="诸葛亮线第五幕 - 取舍之道">
     
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/hero-styles.css">
     <link rel="stylesheet" href="../css/level-select.css">
     
     <style>
-        :root{--li-bai-primary:#DC2626}
-        /* ===== 第五幕《龙魂之鉴》专属样式 ===== */
+        :root{--li-bai-primary:#3B82F6}
+        /* ===== 第五幕《取舍之道》专属样式 ===== */
         
         body.act-bg {
-            background-image: url('../images/wuhou-guard.jpeg');
+            background-image: url('../images/wuhou-temple.jpeg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -44,7 +44,7 @@
         .act5-intro-icon {
             font-size: 4rem;
             margin-bottom: 16px;
-            filter: drop-shadow(0 4px 12px rgba(255,215,0,0.4));
+            filter: drop-shadow(0 4px 12px rgba(59,130,246,0.4));
         }
 
         .act5-intro-title {
@@ -71,15 +71,15 @@
             font-weight: bold;
             border: none;
             cursor: pointer;
-            background: linear-gradient(135deg, #d4a017, #b8860b);
-            color: #1a1a1a;
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            color: white;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255,215,0,0.3);
+            box-shadow: 0 4px 15px rgba(59,130,246,0.3);
         }
 
         .act5-intro-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255,215,0,0.45);
+            box-shadow: 0 8px 25px rgba(59,130,246,0.45);
         }
 
         /* ===== 回顾轮次 ===== */
@@ -111,10 +111,10 @@
             align-items: center;
             gap: 8px;
             padding: 8px 22px;
-            background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(184,134,11,0.15));
-            border: 1px solid rgba(255,215,0,0.35);
+            background: linear-gradient(135deg, rgba(59,130,246,0.25), rgba(37,99,235,0.15));
+            border: 1px solid rgba(59,130,246,0.35);
             border-radius: 24px;
-            color: #ffd700;
+            color: #60a5fa;
             font-weight: bold;
             font-size: 1rem;
         }
@@ -244,8 +244,8 @@
         }
 
         .act5-choice-btn.choice-b:hover {
-            border-color: rgba(107,160,255,0.45);
-            box-shadow: 0 4px 20px rgba(107,160,255,0.12);
+            border-color: rgba(255,107,107,0.45);
+            box-shadow: 0 4px 20px rgba(255,107,107,0.12);
         }
 
         .act5-choice-btn.selected {
@@ -271,9 +271,9 @@
         }
 
         .choice-b .act5-choice-tag {
-            background: rgba(107,160,255,0.15);
-            color: #6ba0ff;
-            border: 1px solid rgba(107,160,255,0.25);
+            background: rgba(255,107,107,0.15);
+            color: #ff6b6b;
+            border: 1px solid rgba(255,107,107,0.25);
         }
 
         .act5-choice-title {
@@ -384,33 +384,33 @@
         }
     </style>
 </head>
-<body class="act-bg" style="background-image: url('../images/wuhou-guard.jpeg');">
+<body class="act-bg" style="background-image: url('../images/wuhou-temple.jpeg');">
     
     <!-- 页面顶部 -->
     <div class="li-bai-header">
         <div class="hero-header">
             <div class="hero-info">
                 <h1 class="hero-name">
-                    <img class="hero-name-avatar" src="../images/zhaoyun-avatar-game.png" alt="赵云">
-                    赵云 · 常山龙胆
+                    <img class="hero-name-avatar" src="../images/zhuge-avatar-game.png" alt="诸葛亮">
+                    诸葛亮 · 卧龙先生
                 </h1>
-                <p class="hero-title">龙魂之鉴 · 武道之心</p>
+                <p class="hero-title">智谋计算 · 取舍之道</p>
                 
-                <div class="stats-container" id="zhaoyun-stats">
+                <div class="stats-container" id="zhuge-stats">
                     <div class="li-bai-stat">
-                        <div class="stat-icon">💪</div>
-                        <div class="stat-label">勇气</div>
-                        <div class="stat-value" id="stat-courage">-</div>
+                        <div class="stat-icon">🍚</div>
+                        <div class="stat-label">粮草</div>
+                        <div class="stat-value" id="stat-food">-</div>
                     </div>
                     <div class="li-bai-stat">
-                        <div class="stat-icon">🛡️</div>
-                        <div class="stat-label">守护</div>
-                        <div class="stat-value" id="stat-guard">-</div>
+                        <div class="stat-icon">⚙️</div>
+                        <div class="stat-label">军械</div>
+                        <div class="stat-value" id="stat-gear">-</div>
                     </div>
                     <div class="li-bai-stat">
-                        <div class="stat-icon">🏆</div>
-                        <div class="stat-label">评级</div>
-                        <div class="stat-value" id="stat-rank">-</div>
+                        <div class="stat-icon">❤️</div>
+                        <div class="stat-label">民心</div>
+                        <div class="stat-value" id="stat-people">-</div>
                     </div>
                 </div>
             </div>
@@ -428,7 +428,7 @@
     <div class="container">
         <div class="game-scene">
             <div class="dialogue-container">
-                <h3 class="scene-title">第五幕 · 龙魂之鉴</h3>
+                <h3 class="scene-title">第五幕 · 取舍之道</h3>
                 
                 <div class="act5-container" id="act5-root">
                     <!-- 由JS动态渲染 -->
@@ -440,172 +440,150 @@
     <script src="../js/common.js"></script>
     <script>
     // ================================================================
-    //  第五幕《龙魂之鉴》—— 武魂赋予仪式
+    //  第五幕《取舍之道》—— 人格赋予仪式
     // ================================================================
 
-    // ---- 从第四幕读取数据 ----
+    // ---- 从第四幕读取数据（通过localStorage的soulData） ----
     let gameData = null;
 
     function loadGameData() {
-        try {
-            const saved = JSON.parse(localStorage.getItem('zhaoYun_state') || '{}');
-            const act4 = saved.act4_result || null;
-
-            gameData = {
-                victory: act4 ? act4.victory : true,
-                timeLeft: act4 ? act4.timeLeft : 30,
-                guardHealth: act4 ? act4.guardHealth : 2,
-                attackCount: act4 ? act4.attackCount : 5,
-                enemiesBlocked: act4 ? act4.enemiesBlocked : 8,
-                skillUsed: act4 ? act4.skillUsed : 2,
-                courage_reward: act4 ? act4.courage_reward : 2,
-                defense_reward: act4 ? act4.defense_reward : 1,
-                rank: act4 ? act4.rank : 'A'
-            };
-        } catch(e) {
-            console.error('加载数据失败:', e);
-            gameData = {
-                victory: true, timeLeft: 30, guardHealth: 2,
-                attackCount: 5, enemiesBlocked: 8, skillUsed: 2,
-                courage_reward: 2, defense_reward: 1, rank: 'A'
-            };
-        }
+        const soulData = getSoulData();
+        const sd = soulData['zhugeLiang'] || {};
+        gameData = {
+            food: sd.food || 0,
+            gear: sd.gear || 0,
+            people: sd.people || 0,
+            roundResults: sd.roundResults || [],
+            playerHP: sd.playerHP !== undefined ? sd.playerHP : 100,
+            aiHP: sd.aiHP !== undefined ? sd.aiHP : 100,
+            playerWins: sd.playerWins !== undefined ? sd.playerWins : 0,
+            totalRounds: sd.totalRounds || 3
+        };
 
         // 更新顶部属性显示
-        document.getElementById('stat-courage').textContent = gameData.courage_reward;
-        document.getElementById('stat-guard').textContent = gameData.defense_reward;
-        document.getElementById('stat-rank').textContent = gameData.rank;
-
-        console.log('Act4数据加载成功:', gameData);
+        document.getElementById('stat-food').textContent = gameData.food;
+        document.getElementById('stat-gear').textContent = gameData.gear;
+        document.getElementById('stat-people').textContent = gameData.people;
     }
+
+    // ---- 卡牌名称映射 ----
+    const CARD_MAP = { food: '粮草', gear: '军械', people: '民心' };
+    const CARD_ICON = { food: '🍚', gear: '⚙️', people: '❤️' };
+    const RESULT_TEXT = { win: '胜', lose: '负', draw: '平' };
 
     // ---- 三轮心法配置 ----
     const ROUND_CONFIGS = [
         {
-            title: '守土之志',
+            title: '资源分配',
             replayBuilder: (data) => buildReplayText(data, 0),
             choices: {
                 A: {
-                    tag: '勇进',
-                    title: '「主动出击，以攻代守！」',
-                    desc: '与其被动挨打，不如迎头痛击。最好的防守就是进攻。'
+                    tag: '以退为进',
+                    title: '壮士断腕之智',
+                    desc: '粮草可弃，军械乃破敌之要。此乃以小博大、保全大局的隐忍之道。'
                 },
                 B: {
-                    tag: '守成',
-                    title: '「稳住阵脚，滴水不漏！」',
-                    desc: '守住每一寸阵地，让敌人无机可乘，方为上将之风。'
+                    tag: '险中求胜',
+                    title: '背水一战的胆色',
+                    desc: '绝境方显英雄本色，留粮草孤注一掷，或能置之死地而后生。'
                 }
             }
         },
         {
-            title: '破阵之势',
+            title: '克制博弈',
             replayBuilder: (data) => buildReplayText(data, 1),
             choices: {
                 A: {
-                    tag: '勇进',
-                    title: '「孤注一掷，直取敌首！」',
-                    desc: '擒贼先擒王，集中力量突破要害，速战速决。'
+                    tag: '料敌为先',
+                    title: '步步为营的稳健',
+                    desc: '既知对手出牌倾向，便以克制应对，稳扎稳打，不贪功冒进。'
                 },
                 B: {
-                    tag: '守成',
-                    title: '「步步为营，稳扎稳打！」',
-                    desc: '先清外围威胁，确保后方安全后再图进取。'
+                    tag: '出奇制胜',
+                    title: '不按常理出牌',
+                    desc: '逆势而出其不意，打破对手预期，险中求变，打其措手不及。'
                 }
             }
         },
         {
-            title: '龙威之现',
+            title: '残局决策',
             replayBuilder: (data) => buildReplayText(data, 2),
             choices: {
                 A: {
-                    tag: '勇进',
-                    title: '「全力以赴，不留后路！」',
-                    desc: '将勇气燃烧到极致，用最猛烈的攻势终结战斗。'
+                    tag: '稳守成果',
+                    title: '积小胜为大胜',
+                    desc: '形势尚可，不宜冒进。守成即是胜利，待时机成熟再图大业。'
                 },
                 B: {
-                    tag: '守成',
-                    title: '「收放自如，蓄势待发！」',
-                    desc: '掌控节奏，留有余力，以备不时之需。'
+                    tag: '一击定乾坤',
+                    title: '倾全力决胜负',
+                    desc: '机不可失时不再来，倾尽所有放手一搏，不胜则已，胜则定乾坤！'
                 }
             }
         }
     ];
 
-    // ---- 回放文案生成器 ----
+    // ---- 回放文案生成器（混合方案：真实数据 + 模板填充）----
     function buildReplayText(data, roundIndex) {
-        const d = data;
-
-        switch(roundIndex) {
-            case 0: {
-                // 防守关
-                const blocked = d.enemiesBlocked || 0;
-                const guard = d.guardHealth || 0;
-                return `第一关【防守关】：<span class="hl">格挡战况</span>回顾。<br><br>
-                    你成功格挡了 <span class="hl">${blocked}</span> 次敌方进攻，
-                    完美防守 <span class="hl">${Math.min(Math.floor(blocked / 3), 5)}</span> 次，
-                    剩余守护值 <span class="hl">${guard}</span>。<br><br>
-                    回首来路，吾于长坂坡前寸步不让——此刻汝心中所想为何？`;
-            }
-            case 1: {
-                // 进攻关
-                const atk = d.attackCount || 0;
-                const time = d.timeLeft || 0;
-                const bossHp = Math.max(0, 100 - (atk * 15));
-                return `第二关【进攻关】：<span class="hl">攻城战况</span>回顾。<br><br>
-                    你发动了 <span class="hl">${atk}</span> 次攻击，
-                    剩余时间 <span class="hl">${time}s</span>，
-                    敌方B城剩余血量 <span class="hl">${bossHp}%</span>。<br><br>
-                    敌营在前，B城危在旦夕——吾必须做出决断！`;
-            }
-            case 2: {
-                // 技能关
-                const skill = d.skillUsed || 0;
-                const rank = d.rank || 'B';
-                return `第三关【技能关】：<span class="hl">七进七出</span>战况回顾。<br><br>
-                    你发动龙胆亮银枪冲击 <span class="hl">${skill}</span> 次，
-                    综合评级 <span class="hl">${rank}</span>。<br><br>
-                    龙胆在手，七进七出之势已成——此乃吾武道之心所向！`;
-            }
-            default:
-                return `第${roundIndex+1}关：<span class="hl">关键时刻</span>回顾。`;
+        const rr = data.roundResults[roundIndex];
+        
+        if (!rr) {
+            // 无真实数据 → 预设模板
+            const templates = [
+                `第${roundIndex+1}回合：战况胶着。<span class="hl">资源争夺</span>进入白热化阶段，每一张牌都关乎全局走向。`,
+                `第${roundIndex+1}回合：<span class="hl">攻防转换</span>的关键时刻。你需要在进取与保守之间做出抉择。`,
+                `第${roundIndex+1}回合：<span class="hl">最终博弈</span>的前奏。此时此刻的选择，将决定整场对弈的走向。`
+            ];
+            return templates[roundIndex] || templates[0];
         }
+
+        // 有真实数据
+        const pCardName = CARD_MAP[rr.playerCard] || rr.playerCard;
+        const aCardName = CARD_MAP[rr.aiCard] || rr.aiCard;
+        const pIcon = CARD_ICON[rr.playerCard] || '';
+        const aIcon = CARD_ICON[rr.aiCard] || '';
+        const resultLabel = RESULT_TEXT[rr.result] || '';
+
+        let text = `第${roundIndex+1}回合：你出<span class="hl">${pIcon}${pCardName}</span>，对手出<span class="hl">${aIcon}${aCardName}</span>`;
+        
+        if (rr.result === 'win') {
+            text += `，<span style="color:#51cf66;">你胜了一阵！</span>`;
+        } else if (rr.result === 'lose') {
+            text += `，<span style="color:#ff6b6b;">此阵未能取胜。</span>`;
+        } else {
+            text += `，<span style="color:#ffd700;">双方旗鼓相当。</span>`;
+        }
+
+        return text;
     }
 
-    // ---- 人格矩阵（8种基础型 × 2种变体 = 16标签）----
+    // ---- 人格矩阵（4类主型 × 2种变体 = 8标签）----
     const PERSONALITY_MATRIX = {
-        AAA: { type: '破阵先锋', comment: '善哉！汝勇往直前，以雷霆之势撕裂一切阻碍。正如吾当年长坂坡七进七出，一马当先，无人能挡。这份锐气，乃大将之风骨也。' },
-        AAB: { type: '常胜将军', comment: '可嘉。汝知何时出击、何时收敛，分寸拿捏得当。攻主守辅，进退自如——此乃常胜之道，非一日之功可成。' },
-        ABA: { type: '常胜将军', comment: '可嘉。汝知何时出击、何时收敛，分寸拿捏得当。攻主守辅，进退自如——此乃常胜之道，非一日之功可成。' },
-        BAA: { type: '常胜将军', comment: '可嘉。汝知何时出击、何时收敛，分寸拿捏得当。攻主守辅，进退自如——此乃常胜之道，非一日之功可成。' },
-        ABB: { type: '铁壁统帅', comment: '妙极。汝以守为本、伺机而动，铜墙铁壁之中暗藏锋芒。最坚固的堡垒，往往藏着最致命的一击——此乃统帅之才也。' },
-        BAB: { type: '铁壁统帅', comment: '妙极。汝以守为本、伺机而动，铜墙铁壁之中暗藏锋芒。最坚固的堡垒，往往藏着最致命的一击——此乃统帅之才也。' },
-        BBA: { type: '铁壁统帅', comment: '妙极。汝以守为本、伺机而动，铜墙铁壁之中暗藏锋芒。最坚固的堡垒，往往藏着最致命的一击——此乃统帅之才也。' },
-        BBB: { type: '磐石之盾',   comment: '善！汝坚如磐石，万夫莫开。不动如山的意志捍卫一切——但切记，盾牌之后亦需有剑之锋芒。吾愿与汝共勉：守护之力，终须化为进取之势。' }
+        AAA: { tag: '深谋远虑者', variant: '余', comment: '善。汝用兵，七分稳，三分奇。静如处子，动如脱兔，已得用势之妙。此乃大将之风，可堪大任。' },
+        AAB: { tag: '持重谋士',   variant: '余', comment: '可嘉。汝知进退之度，明得失之理。稳重之中不失灵活，再添几分胆色，可成大器。' },
+        ABA: { tag: '持重谋士',   variant: '余', comment: '可嘉。汝知进退之度，明得失之理。稳重之中不失灵活，再添几分胆色，可成大器。' },
+        BAA: { tag: '持重谋士',   variant: '余', comment: '可嘉。汝知进退之度，明得失之理。稳重之中不失灵活，再添几分胆色，可成大器。' },
+        ABB: { tag: '灵动策士',   variant: '余', comment: '妙哉。汝有勇有谋，敢于破局。然兵行险招需审时度势，切记：奇谋可一而不可再。' },
+        BAB: { tag: '灵动策士',   variant: '余', comment: '妙哉。汝有勇有谋，敢于破局。然兵行险招需审时度势，切记：奇谋可一而不可再。' },
+        BBA: { tag: '灵动策士',   variant: '余', comment: '妙哉。汝有勇有谋，敢于破局。然兵行险招需审时度势，切记：奇谋可一而不可再。' },
+        BBB: { tag: '奇谋决胜者', variant: '余', comment: '妙极！兵行险招而竟全功，非大勇者不能为。然切记：常走险棋终有一失，当以稳为本、奇为用。' }
     };
 
-    // "锐"变体覆盖（勇气远超守护时）
-    const VARIANT_SHARP_OVERRIDES = {
-        '破阵先锋': { type: '龙胆战神',   comment: '天哪！汝之锐气竟与吾当年如出一辙！七进七出，单骑救主——这等气魄，非大勇者不能有！汝便是当世之龙胆，吾愿称汝为知己！' },
-        '常胜将军': { type: '锐锋虎将',   comment: '好！汝于稳健之中更添锋芒，进可攻退可守，且锐意十足。此等将才，千军万马中亦可游刃有余。吾甚慰！' },
-        '铁壁统帅': { type: '金汤猛将',   comment: '奇哉！汝一面固若金汤，一面锐不可当。守中有攻，稳中带狠——这般矛盾又和谐的武道，令吾想起子龙年轻时的模样！' },
-        '磐石之盾': { type: '不动冥王',   comment: '有趣……汝明明坚若磐石，却又隐隐透着一股锐利之气。似静实动，似守实攻——此乃武学之上乘境界也！' }
-    };
-
-    // "稳"变体覆盖（守护远超勇气时）
-    const VARIANT_STEADY_OVERRIDES = {
-        '破阵先锋': { type: '沉稳先锋',   comment: '可嘉。汝虽锐意进取却不失沉稳，冲锋之际仍顾全大局。比起当年的吾，汝更多了几分老将的风范——这是好事。' },
-        '常胜将军': { type: '稳健良将',   comment: '善。汝行事周密，步步为营。每一步都算无遗策，稳扎稳打中见真章。此乃大将之稳重本色，假以时日必有所成。' },
-        '铁壁统帅': { type: '磐石统御',   comment: '极好！汝防御之术已达化境，滴水不漏，固若金汤。有汝坐镇军中，三军皆安——此乃真正的国之柱石。' },
-        '磐石之盾': { type: '不灭壁垒',   comment: '绝矣！汝之意志如山岳般不可撼动，任凭风吹雨打，自岿然不动。吾愿称汝为——天下第一守将！' }
+    // 资源匮乏时的"险"变体
+    const VARIANT_RISK_OVERRIDES = {
+        '深谋远虑者': { tag: '苦守成策者', comment: '善。汝于逆境中仍能坚守，虽步履维艰，然不失方寸。此乃大将之风，来日方长。' },
+        '持重谋士':   { tag: '谨慎算师',   comment: '可嘉。汝行事周密，步步为营。逆境之中更显沉稳本色，假以时日必有所成。' },
+        '灵动策士':   { tag: '险中求存者', comment: '可叹。汝于绝境中奋力一搏，勇气可嘉。然日后当思：稳扎稳打方为长远之计。' },
+        '奇谋决胜者': { tag: '孤注一掷者', comment: '奇绝！汝竟以全部身家搏一线生机，非大勇大智者不能为此举。然此法不可常用，慎之慎之。' }
     };
 
     // ---- 状态管理 ----
-    let currentRound = 0;
-    let choices = [];
+    let currentRound = 0;      // 当前轮次 0/1/2
+    let choices = [];           // 存储每轮选择 ['A','B','A']
 
     // ---- 页面初始化 ----
     document.addEventListener('DOMContentLoaded', function() {
-        clearActStateOnFreshEntry('zhaoState');
+        clearActStateOnFreshEntry('zhugeState');
         loadGameData();
         renderIntro();
     });
@@ -617,16 +595,14 @@
         const root = document.getElementById('act5-root');
         root.innerHTML = `
             <div class="act5-intro">
-                <div class="act5-intro-icon">🐉</div>
-                <div class="act5-intro-title">龙 魂 之 鉴</div>
+                <div class="act5-intro-icon">🪭</div>
+                <div class="act5-intro-title">取 舍 之 道</div>
                 <div class="act5-intro-subtitle">
-                    战鼓渐息，硝烟散尽。<br>
-                    赵云立于长坂坡前，回首来路——<br>
-                    那七进七出的身影，那护主突围的誓言，皆已刻入龙魂深处。<br>
-                    如今，武魂之镜已然展开，<br>
-                    它将映照出你真正的<b>武者之道</b>。
+                    方才对弈，落子无悔。<br>
+                    然其中取舍，汝可自知？<br>
+                    且看这三处关要，以此窥见汝之将道。
                 </div>
-                <button class="act5-intro-btn" onclick="startReview()">开始鉴心</button>
+                <button class="act5-intro-btn" onclick="startReview()">入座复盘</button>
             </div>
         `;
     }
@@ -658,16 +634,16 @@
         root.innerHTML = `
             <div class="act5-round active">
                 <div class="act5-round-header">
-                    <div class="act5-round-num">⚔ 第 ${currentRound + 1} 关 · ${cfg.title}</div>
+                    <div class="act5-round-num">⚡ 第 ${currentRound + 1} 关 · ${cfg.title}</div>
                     <div class="act5-round-progress">${dotsHtml}</div>
                 </div>
                 <div class="act5-round-body">
                     <div class="act5-replay-card">
-                        <div class="act5-replay-label">📜 战况回放</div>
+                        <div class="act5-replay-label">📜 时刻回放</div>
                         <div class="act5-replay-text">${replayText}</div>
                     </div>
                     <div class="act5-choice-panel">
-                        <div class="act5-choice-label">💡 武道抉择</div>
+                        <div class="act5-choice-label">💡 心法抉择</div>
                         <div class="act5-choice-btn choice-a" onclick="makeChoice('A')">
                             <div class="act5-choice-tag">${cfg.choices.A.tag}</div>
                             <div class="act5-choice-title">${cfg.choices.A.title}</div>
@@ -684,7 +660,7 @@
         `;
     }
 
-    /** 做出选择（★ 修复：不再依赖隐式event对象） */
+    /** 做出选择 */
     function makeChoice(choice) {
         choices.push(choice);
 
@@ -714,67 +690,36 @@
         let base = PERSONALITY_MATRIX[combo];
         if (!base) base = PERSONALITY_MATRIX['AAB']; // fallback
 
-        // ★ 变体判定：基于勇气/守护比值
-        const courage = gameData.courage_reward || 0;
-        const guard = gameData.defense_reward || 0;
-        const totalAttr = courage + guard;
+        // ★ 加权因子：资源总值决定"余"或"险"变体
+        const totalResources = (gameData.food || 0) + (gameData.gear || 0) + (gameData.people || 0);
+        const resourceThreshold = 5; // 总资源>=5为"充足"
+        const isResourceRich = totalResources >= resourceThreshold;
 
-        let finalType, finalComment;
+        // HP加权：低HP偏向"险"
+        const hpRatio = gameData.playerHP / 100;
+        const isHpLow = hpRatio < 0.5;
 
-        if (totalAttr > 0) {
-            const courageRatio = courage / totalAttr;
-            
-            if (courageRatio >= 0.67 && courage > guard * 1.5) {
-                // 勇气压倒性优势 → "锐"变体
-                const override = VARIANT_SHARP_OVERRIDES[base.type];
-                if (override) {
-                    finalType = override.type;
-                    finalComment = override.comment;
-                } else {
-                    finalType = base.type;
-                    finalComment = base.comment;
-                }
-            } else if (guard > courage * 1.5) {
-                // 守护压倒性优势 → "稳"变体
-                const override = VARIANT_STEADY_OVERRIDES[base.type];
-                if (override) {
-                    finalType = override.type;
-                    finalComment = override.comment;
-                } else {
-                    finalType = base.type;
-                    finalComment = base.comment;
-                }
-            } else {
-                // 接近均衡 → 保持原标签
-                finalType = base.type;
-                finalComment = base.comment;
-            }
+        // 综合判定：资源丰富且HP正常 → "余"；否则考虑"险"
+        const useRiskVariant = (!isResourceRich || isHpLow);
+
+        let finalTag, finalComment;
+        if (useRiskVariant && VARIANT_RISK_OVERRIDES[base.tag]) {
+            finalTag = VARIANT_RISK_OVERRIDES[base.tag].tag;
+            finalComment = VARIANT_RISK_OVERRIDES[base.tag].comment;
         } else {
-            finalType = base.type;
+            finalTag = base.tag;
             finalComment = base.comment;
         }
 
-        // 确定变体名称
-        let variantLabel = '均衡';
-        if (courage > guard * 1.5) variantLabel = '锐';
-        else if (guard > courage * 1.5) variantLabel = '稳';
-
-        const scoreA = choices.filter(c => c === 'A').length;
-        const scoreB = choices.filter(c => c === 'B').length;
-
         return {
             combo,
-            type: finalType,
-            variant: variantLabel,
+            tag: finalTag,
             comment: finalComment,
-            aCount: scoreA,
-            bCount: scoreB,
-            courage: courage,
-            guard: guard,
-            rank: gameData.rank,
-            enemiesBlocked: gameData.enemiesBlocked,
-            attackCount: gameData.attackCount,
-            skillUsed: gameData.skillUsed
+            aCount: choices.filter(c => c === 'A').length,
+            bCount: choices.filter(c => c === 'B').length,
+            totalResources,
+            playerWins: gameData.playerWins,
+            playerHP: gameData.playerHP
         };
     }
 
@@ -785,56 +730,46 @@
 
         root.innerHTML = `
             <div class="act5-result active">
-                <div class="act5-result-banner">— 武魂判定 —</div>
-                <div class="act5-result-tag">${result.type}<span style="font-size:0.7em;margin-left:8px;color:rgba(255,215,0,0.7)">「${result.variant}」</span></div>
+                <div class="act5-result-banner">— 人格判定 —</div>
+                <div class="act5-result-tag">${result.tag}</div>
                 
                 <div class="act5-result-comment">
-                    <div class="act5-result-comment-label">⚔️ 赵云评语</div>
+                    <div class="act5-result-comment-label">🪭 诸葛亮评语</div>
                     <div class="act5-result-comment-text">"${result.comment}"</div>
                 </div>
 
                 <div class="act5-result-summary">
                     <div class="act5-result-chip">选择组合：${result.combo}</div>
-                    <div class="act5-result-chip">勇进 ${result.aCount} · 守成 ${result.bCount}</div>
-                    <div class="act5-result-chip">💪 勇气 ${result.courage} · 🛡️ 守护 ${result.guard}</div>
-                    <div class="act5-result-chip">第四幕评级：${result.rank}</div>
+                    <div class="act5-result-chip">稳重型 ${result.aCount} · 进取型 ${result.bCount}</div>
+                    <div class="act5-result-chip">剩余资源：${result.totalResources}</div>
+                    <div class="act5-result-chip">最终HP：${result.playerHP}%</div>
                 </div>
 
-                <button class="act5-cert-btn" onclick="goToCert()">📜 揭晓武魂</button>
+                <button class="act5-cert-btn" onclick="goToCert()">📜 领取结业证书</button>
             </div>
         `;
 
-        // 将结果存入全局供证书页使用
+        // 将结果存入 localStorage 供证书页使用
         window.__act5Result = result;
-
-        // 保存游魂数据
-        saveSoulData('zhaoYun', {
-            act: 5,
-            personality: result.type,
-            variant: result.variant,
-            scores: { A: result.aCount, B: result.bCount },
-            attributes: { courage: result.courage, guard: result.guard },
-            choices: result.combo.split('')
-        });
     }
 
     /** 跳转证书页 */
     function goToCert() {
-        // 标记赵云线通关（第五幕完成）
-        saveProgress('zhaoYun', 5);
+        // ★ 标记诸葛亮线通关（第五幕完成）
+        saveProgress('zhugeLiang', 5);
         checkAllHeroesAchievement();
-        unlockAchievement('zhao_complete', '常胜将军', '完成赵云线全五幕通关', '⚔️');
+        unlockAchievement('zhuge_complete', '卧龙之谋', '完成诸葛亮线全五幕通关', '🪭');
         
         const r = window.__act5Result;
         if (!r) { goToCertFallback(); return; }
 
         const params = new URLSearchParams({
-            hero: '赵云',
-            title: r.type,
-            courage: r.courage || 0,
-            guard: r.guard || 0,
-            personalityTag: r.type,
-            variant: r.variant,
+            hero: '诸葛亮',
+            title: r.tag,
+            food: gameData.food || 0,
+            gear: gameData.gear || 0,
+            people: gameData.people || 0,
+            personalityTag: r.tag,
             comment: r.comment
         });
         window.location.href = '../certificate.html?' + params.toString();
@@ -843,15 +778,16 @@
     /** 无结果时的降级跳转 */
     function goToCertFallback() {
         const params = new URLSearchParams({
-            hero: '赵云',
-            title: '龙胆虎将',
-            courage: gameData.courage_reward || 0,
-            guard: gameData.defense_reward || 0
+            hero: '诸葛亮',
+            title: '绝代智谋',
+            food: gameData.food || 0,
+            gear: gameData.gear || 0,
+            people: gameData.people || 0
         });
         window.location.href = '../certificate.html?' + params.toString();
     }
     </script>
     <script src="../js/level-select.js"></script>
-    <script>document.addEventListener('DOMContentLoaded', () => LevelSelect.initPanel('zhaoYun', 5));</script>
+    <script>document.addEventListener('DOMContentLoaded', () => LevelSelect.initPanel('zhugeLiang', 5));</script>
 </body>
 </html>

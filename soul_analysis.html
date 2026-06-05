@@ -16,10 +16,10 @@
             --soul-primary: #a855f7;
             --soul-primary-light: rgba(168, 85, 247, 0.15);
             --soul-secondary: #6366f1;
-            --soul-accent: #60E0FF;
+            --soul-accent: #A855F7;
             --soul-gold: #ffd700;
-            --li-color: #60E0FF;
-            --zhuge-color: #0066CC;
+            --li-color: #A855F7;
+            --zhuge-color: #3B82F6;
             --zhao-color: #C8C8D7;
         }
         
@@ -667,7 +667,7 @@
             liBai: {
                 name: '李白',
                 icon: '🍷',
-                color: '#60E0FF',
+                color: '#A855F7',
                 title: '浪漫诗心型游魂',
                 type: '诗酒风流 · 浪漫不羁',
                 seal: '青莲剑仙认证',
@@ -681,7 +681,7 @@
             zhugeLiang: {
                 name: '诸葛亮',
                 icon: '🎯',
-                color: '#0066CC',
+                color: '#3B82F6',
                 title: '深谋远虑型游魂',
                 type: '运筹帷幄 · 智谋无双',
                 seal: '绝代智谋认证',
@@ -784,10 +784,19 @@
         function generateReport() {
             const soulData = getSoulData();
             
-            // 获取三条线的 soulValue
-            const liBaiValue = (soulData.liBai && soulData.liBai.soulValue) || 0;
-            const zhugeValue = (soulData.zhugeLiang && soulData.zhugeLiang.soulValue) || 0;
-            const zhaoValue = (soulData.zhaoYun && soulData.zhaoYun.soulValue) || 0;
+            // 获取三条线的 soulValue（从实际保存的属性数据中计算）
+            // 各线 saveSoulData 保存的字段不同，需兼容提取
+            function calcSoulValue(heroKey) {
+                const d = soulData[heroKey];
+                if (!d) return 0;
+                if (heroKey === 'liBai') return (d.poem || 0) + (d.wine || 0);
+                if (heroKey === 'zhugeLiang') return (d.food || 0) + (d.gear || 0) + (d.people || 0);
+                if (heroKey === 'zhaoYun') return (d.attributes ? (d.attributes.courage || 0) + (d.attributes.guard || 0) : (d.courage || 0) + (d.guard || 0));
+                return d.soulValue || 0;
+            }
+            const liBaiValue = calcSoulValue('liBai');
+            const zhugeValue = calcSoulValue('zhugeLiang');
+            const zhaoValue = calcSoulValue('zhaoYun');
             
             // 计算最大值总和，用于百分比
             const totalValue = liBaiValue + zhugeValue + zhaoValue;
@@ -802,7 +811,7 @@
             document.getElementById('title-seal').textContent = profile.seal;
             
             // 填充契合度
-            renderAffinity(liBaiValue, zhugeValue, zhaoValue, totalValue, result.type);
+            renderAffinity(liBaiValue, zhugeValue, zhaoValue, totalValue, result.type, soulData);
             
             // 填充导师寄语
             document.getElementById('message-from').innerHTML = 
@@ -852,14 +861,14 @@
         }
         
         // 渲染契合度卡片
-        function renderAffinity(liVal, zhugeVal, zhaoVal, total, soulType) {
+        function renderAffinity(liVal, zhugeVal, zhaoVal, total, soulType, soulData) {
             const grid = document.getElementById('affinity-grid');
             grid.innerHTML = '';
             
             const mentors = [
-                { id: 'liBai', name: '李白', icon: '🍷', color: '#60E0FF', value: liVal, label1: '诗心', label2: '酒意', data: getSoulData().liBai || {} },
-                { id: 'zhugeLiang', name: '诸葛亮', icon: '🎯', color: '#0066CC', value: zhugeVal, label1: '智谋', label2: '效率', data: getSoulData().zhugeLiang || {} },
-                { id: 'zhaoYun', name: '赵云', icon: '⚔️', color: '#C8C8D7', value: zhaoVal, label1: '勇气', label2: '守护', data: getSoulData().zhaoYun || {} }
+                { id: 'liBai', name: '李白', icon: '🍷', color: '#A855F7', value: liVal, label1: '诗心', label2: '酒意', data: soulData.liBai || {} },
+                { id: 'zhugeLiang', name: '诸葛亮', icon: '🎯', color: '#3B82F6', value: zhugeVal, label1: '智谋', label2: '效率', data: soulData.zhugeLiang || {} },
+                { id: 'zhaoYun', name: '赵云', icon: '⚔️', color: '#C8C8D7', value: zhaoVal, label1: '勇气', label2: '守护', data: soulData.zhaoYun || {} }
             ];
             
             // 计算百分比

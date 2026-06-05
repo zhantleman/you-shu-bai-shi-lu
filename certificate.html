@@ -158,15 +158,15 @@
         }
 
         .cert-title-earned.libai {
-            background: linear-gradient(135deg, rgba(96, 224, 255, 0.3), rgba(212, 175, 55, 0.3));
-            border: 1px solid rgba(96, 224, 255, 0.5);
-            color: #60E0FF;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(255, 215, 0, 0.3));
+            border: 1px solid rgba(168, 85, 247, 0.5);
+            color: #A855F7;
         }
 
         .cert-title-earned.zhuge {
-            background: linear-gradient(135deg, rgba(0, 102, 204, 0.3), rgba(255, 140, 0, 0.3));
-            border: 1px solid rgba(0, 102, 204, 0.5);
-            color: #0066CC;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(255, 215, 0, 0.3));
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            color: #3B82F6;
         }
 
         .cert-title-earned.zhao {
@@ -290,6 +290,86 @@
             transform: translateY(-2px);
         }
 
+        /* ★ 人格判定区（第五幕新增）★ */
+        .cert-personality {
+            background: linear-gradient(135deg, rgba(255,215,0,0.06), rgba(255,215,0,0.03));
+            border: 1px solid rgba(255,215,0,0.22);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 28px;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cert-personality::before {
+            content: '';
+            position: absolute;
+            top: -40px; right: -40px;
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,215,0,0.08), transparent 70%);
+            pointer-events: none;
+        }
+
+        .cert-personality-title {
+            font-size: 0.82rem;
+            color: rgba(255,215,0,0.55);
+            letter-spacing: 3px;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .cert-personality-tag-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .cert-personality-tag-label {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.5);
+            white-space: nowrap;
+        }
+
+        .cert-personality-badge {
+            display: inline-block;
+            padding: 6px 22px;
+            background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(184,134,11,0.08));
+            border: 1.5px solid rgba(255,215,0,0.4);
+            border-radius: 20px;
+            font-size: 1.15rem;
+            font-weight: bold;
+            color: #ffd700;
+            letter-spacing: 2px;
+        }
+
+        .cert-personality-comment-box {
+            background: rgba(0,0,0,0.25);
+            border-left: 3px solid rgba(255,215,0,0.4);
+            border-radius: 0 10px 10px 0;
+            padding: 14px 18px;
+        }
+
+        .cert-personality-comment-label {
+            font-size: 0.78rem;
+            color: rgba(255,215,0,0.45);
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+        }
+
+        .cert-personality-comment-text {
+            font-size: 0.96rem;
+            color: rgba(255,255,255,0.82);
+            line-height: 1.85;
+            font-style: italic;
+        }
+
         /* 错误提示页 */
         .cert-error {
             text-align: center;
@@ -338,7 +418,7 @@
             '李白': {
                 icon: '🍷',
                 heroClass: 'libai',
-                statColor: '#60E0FF',
+                statColor: '#A855F7',
                 statKeys: [
                     { key: 'poetry', label: '诗心', icon: '📜' },
                     { key: 'wine', label: '酒意', icon: '🍶' },
@@ -349,13 +429,13 @@
             '诸葛亮': {
                 icon: '🧮',
                 heroClass: 'zhuge',
-                statColor: '#0066CC',
+                statColor: '#3B82F6',
                 statKeys: [
-                    { key: 'strategy', label: '谋略', icon: '⚔️' },
-                    { key: 'efficiency', label: '效率', icon: '⚡' },
-                    { key: 'quiz', label: '答题', icon: '🎯' }
+                    { key: 'food', label: '粮草', icon: '🍚' },
+                    { key: 'gear', label: '军械', icon: '⚙️' },
+                    { key: 'people', label: '民心', icon: '❤️' }
                 ],
-                completionText: '已完成诸葛亮线全部五幕旅程，在智谋与效率的结合中运筹帷幄，决胜千里。'
+                completionText: '已完成诸葛亮线全部四幕旅程，在粮草、军械与民心中运筹帷幄，决胜千里。'
             },
             '赵云': {
                 icon: '⚔️',
@@ -410,6 +490,10 @@
             // 玩家名
             const playerName = localStorage.getItem('player_name') || '蜀地旅人';
 
+            // ★ 从URL参数读取人格标签和评语（第五幕新增）
+            const personalityTag = params.get('personalityTag') || '';
+            const comment = params.get('comment') || '';
+
             // 构建属性网格HTML
             let statsHTML = '';
             config.statKeys.forEach(sk => {
@@ -436,6 +520,23 @@
                         <div class="cert-name">${playerName}</div>
                         <div class="cert-title-earned ${config.heroClass}">${title}</div>
                         <p class="cert-desc">${config.completionText}</p>
+
+                        ${personalityTag ? `
+                        <!-- ★ 人格判定区（第五幕生成）★ -->
+                        <div class="cert-personality">
+                            <div class="cert-personality-title">🏷️ 人格判定</div>
+                            <div class="cert-personality-tag-row">
+                                <span class="cert-personality-tag-label">人格标签：</span>
+                                <span class="cert-personality-badge">${personalityTag}</span>
+                            </div>
+                            ${comment ? `
+                            <div class="cert-personality-comment-box">
+                                <div class="cert-personality-comment-label">${config.icon === '🧮' ? '🪭 诸葛亮评语' : '导师评语'}</div>
+                                <div class="cert-personality-comment-text">"${comment}"</div>
+                            </div>
+                            ` : ''}
+                        </div>
+                        ` : ''}
 
                         <div class="cert-stats">
                             <div class="cert-stats-title">— 旅 程 数 据 —</div>

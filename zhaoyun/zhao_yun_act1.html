@@ -5,55 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>赵云线 · 游蜀拜师录</title>
     <link rel="icon" type="image/svg+xml" href="../genie.svg">
-    <meta name="description" content="赵云线第一幕 - 武侯祠守卫战">
+    <meta name="description" content="赵云线 - 勇者守护的蜀地之旅">
     
+    <!-- 引用公共CSS -->
     <link rel="stylesheet" href="../css/style.css">
+    <!-- 英雄线公共CSS -->
     <link rel="stylesheet" href="../css/hero-styles.css">
+    <!-- 选关系统CSS -->
+    <link rel="stylesheet" href="../css/level-select.css">
+    <style>:root{--li-bai-primary:#DC2626}</style>
 </head>
-<body class="act-bg" style="background-image: url('../images/wuhou-guard.jpeg');">
-    <div class="zhao-header">
-        <div class="container">
-            <div class="hero-header">
-                <div class="hero-info">
-                    <h1 class="hero-name">
-                        <span class="hero-name-icon">⚔️</span>
-                        赵云 · 苍天翔龙
-                    </h1>
-                    <p class="hero-title">勇者之誓 · 武侯祠守卫战</p>
-                    
-                    <div class="stats-container" id="zhao-stats">
-                        <div class="zhao-stat">
-                            <div class="stat-icon">💪</div>
-                            <div class="stat-label">勇气</div>
-                            <div class="stat-value" id="stat-courage">0</div>
-                        </div>
-                        <div class="zhao-stat">
-                            <div class="stat-icon">🛡️</div>
-                            <div class="stat-label">守护</div>
-                            <div class="stat-value" id="stat-guard">0</div>
-                        </div>
-                        <div class="zhao-stat">
-                            <div class="stat-icon">🎯</div>
-                            <div class="stat-label">探索</div>
-                            <div class="stat-value" id="stat-explored">0/2</div>
-                        </div>
-                    </div>
+<body class="act-bg has-notebook" style="background-image: url('../images/wuhou-guard.jpeg');">
+    <!-- 页面顶部 — 固定顶栏 -->
+    <div class="li-bai-header">
+        <div class="hero-header">
+            <div class="hero-info">
+                <h1 class="hero-name">
+                    <img class="hero-name-avatar" src="../images/zhaoyun-avatar-game.png" alt="赵云">
+                    赵云 · 苍天翔龙
+                </h1>
+                <p class="hero-title">勇者之誓 · 武侯祠守卫战</p>
+            </div>
+
+            <div class="stats-container" id="zhao-stats">
+                <div class="li-bai-stat">
+                    <div class="stat-icon">💪</div>
+                    <div class="stat-label">勇气</div>
+                    <div class="stat-value" id="stat-courage">0</div>
                 </div>
-                
-                <div class="act-indicator">
-                    <div class="act-number" id="act-number">1</div>
-                    <div class="act-text">第 <span id="act-text">一</span> 幕</div>
+                <div class="li-bai-stat">
+                    <div class="stat-icon">🛡️</div>
+                    <div class="stat-label">守护</div>
+                    <div class="stat-value" id="stat-guard">0</div>
+                </div>
+                <div class="li-bai-stat">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-label">探索</div>
+                    <div class="stat-value" id="stat-explored">0/2</div>
                 </div>
             </div>
-            
-            <div style="text-align: center; margin-top: 20px;">
-                <button class="btn btn-secondary" data-action="go-home">
-                    ← 返回首页
-                </button>
+
+            <div class="act-indicator">
+                <div class="act-number" id="act-number">1</div>
+                <div class="act-text">第 <span id="act-text">一</span> 幕</div>
             </div>
+
+            <!-- 返回首页按钮已移除，由选关面板取代 -->
         </div>
     </div>
     
+    <!-- 游戏主内容 -->
     <div class="container">
         <div class="game-scene" id="dialogue-scene">
             <div class="dialogue-container">
@@ -62,87 +63,46 @@
                 <div id="dialogue-log" class="dialogue-log">
                 </div>
                 
-                <div class="zhao-options" id="zhao-options">
+                <div class="li-bai-options" id="li-bai-options">
                 </div>
             </div>
         </div>
     </div>
     
+    <!-- 引用公共JavaScript -->
     <script src="../js/common.js"></script>
+    <!-- 选关系统JS -->
+    <script src="../js/level-select.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', () => LevelSelect.initPanel('zhaoYun', 1));</script>
+    <!-- 赵云线游蜀笔记 -->
+    <script src="../js/zhaoyun-notebook.js"></script>
     
+    <!-- 赵云线特有JavaScript -->
     <script>
+        // ==================== 赵云线状态变量 ====================
         const zhaoState = {
             currentAct: 1,
             currentStep: 'opening',
             courage: 0,
             guard: 0,
-            exploredOptions: {
-                option1: false,
-                option2: false
-            },
-            isGameStarted: false
+            exploredOptions: { option1: false, option2: false },
+            actCourageChoices: 0,
+            actGuardChoices: 0,
+            _isAnswering: false,
+            _locked: false
         };
         
-        const gameContent = {
-            opening: {
-                dialogues: [
-                    { speaker: "赵云", text: "苍天翔龙，一往无前！我乃赵云，此地武侯祠，千年忠义所聚。今日有我守护，你可愿随我并肩作战？" },
-                    { speaker: "赵云", text: "武侯祠不只是古迹，它承载着守护的信念。你有什么想了解的？" }
-                ]
-            },
-            exploreOptions: {
-                option1: {
-                    label: "师傅，武侯祠的游客安保体系是怎么运作的？",
-                    speaker: "玩家",
-                    text: "师傅，武侯祠的游客安保体系是怎么运作的？",
-                    response: {
-                        speaker: "赵云",
-                        text: "好问题！此祠采用智能监控与人工巡查双轨制，覆盖全区域无死角。危急时刻，3分钟内响应到位。守护，不是守在门口，而是时刻准备着。勇气，是行动力。"
-                    }
-                },
-                option2: {
-                    label: "千年古祠如何在现代旅游中保持文化传承？",
-                    speaker: "玩家",
-                    text: "千年古祠如何在现代旅游中保持文化传承？",
-                    response: {
-                        speaker: "赵云",
-                        text: "古祠以数字化展陈与传统祭祀并行——AR还原三国战场，同时保留香火祭拜的仪式感。守护，是让过去活在当下。真正的勇者，既能冲锋陷阵，也能守护传承。"
-                    }
-                }
-            },
-            quiz: {
-                question: "我来验验你的胆识：武侯祠安保体系的核心，是'技术'还是'人'？",
-                options: [
-                    { text: "技术为盾，人为剑。智能系统提供全域覆盖，但最终决策与行动依赖人的勇气与判断。", correct: true },
-                    { text: "靠技术就够了，人只是辅助。", correct: false }
-                ],
-                responses: {
-                    correct: "好！你理解了——再精密的系统，也需要勇者来驾驭。勇气是第一战力。",
-                    incorrect: "错了。再强的盾，也需要持盾之人。技术是工具，勇气才是根本。"
-                }
-            },
-            finalChoice: {
-                question: "那么，此地最令你在意的，是那份'直面危险的勇气'，还是那份'守护传承的决心'？",
-                options: [
-                    { text: "勇气！冲锋在前，方为战士本色。直面挑战，一往无前。", type: 'courage' },
-                    { text: "守护！守卫所珍视之物，才是勇气的真义。坚守后方，护佑众生。", type: 'guard' }
-                ],
-                responses: {
-                    courage: "善！勇者无惧，一骑当千。有此胆魄，不愧为吾弟子。",
-                    guard: "好！大勇若怯，大智若愚。懂得守护，方为大将。"
-                }
-            }
-        };
-
+        // ==================== 页面初始化 ====================
         document.addEventListener('DOMContentLoaded', function() {
             console.log('赵云线第一幕页面已加载');
             clearActStateOnFreshEntry('zhaoState');
             loadZhaoState();
             startZhaoFirstAct();
             bindZhaoEvents();
-            document.body.style.display = 'block';
+            if (typeof initNotebook === 'function') initNotebook();
         });
         
+        // ==================== 状态管理 ====================
         function loadZhaoState() {
             try {
                 const savedState = localStorage.getItem('zhaoState');
@@ -153,7 +113,6 @@
                 zhaoState.courage = parseInt(localStorage.getItem('zhao_courage')) || 0;
                 zhaoState.guard = parseInt(localStorage.getItem('zhao_guard')) || 0;
                 
-                // 已通关？加载最终属性并锁定（回看模式）
                 if (isHeroLineCompleted('zhaoYun')) {
                     const final = getHeroFinalAttrs('zhaoYun');
                     if (final) {
@@ -162,11 +121,10 @@
                         zhaoState._locked = true;
                     }
                 }
-                
                 updateZhaoStats();
                 console.log('赵云线状态已加载', zhaoState._locked ? '(锁定模式)' : '');
             } catch (error) {
-                console.error('加载赵云线状态失败:', error);
+                console.error('加载状态失败:', error);
             }
         }
         
@@ -175,156 +133,269 @@
                 localStorage.setItem('zhaoState', JSON.stringify(zhaoState));
                 localStorage.setItem('zhao_courage', zhaoState.courage);
                 localStorage.setItem('zhao_guard', zhaoState.guard);
-                gameState.stats.courage = zhaoState.courage;
-                gameState.stats.guard = zhaoState.guard;
-                saveGameState();
-                console.log('赵云线状态已保存');
+                if (typeof gameState !== 'undefined') {
+                    gameState.stats.courage = zhaoState.courage;
+                    gameState.stats.guard = zhaoState.guard;
+                    if (typeof saveGameState === 'function') saveGameState();
+                }
             } catch (error) {
-                console.error('保存赵云线状态失败:', error);
+                console.error('保存失败:', error);
             }
         }
         
         function updateZhaoStats() {
-            const courageEl = document.getElementById('stat-courage');
-            const guardEl = document.getElementById('stat-guard');
-            const exploredEl = document.getElementById('stat-explored');
-            if (courageEl) courageEl.textContent = zhaoState.courage;
-            if (guardEl) guardEl.textContent = zhaoState.guard;
+            document.getElementById('stat-courage').textContent = zhaoState.courage;
+            document.getElementById('stat-guard').textContent = zhaoState.guard;
             const exploredCount = (zhaoState.exploredOptions.option1 ? 1 : 0) + (zhaoState.exploredOptions.option2 ? 1 : 0);
-            if (exploredEl) exploredEl.textContent = `${exploredCount}/2`;
+            document.getElementById('stat-explored').textContent = `${exploredCount}/2`;
+            document.getElementById('act-number').textContent = zhaoState.currentAct;
+            const actText = ['一', '二', '三', '四'][zhaoState.currentAct - 1] || '一';
+            document.getElementById('act-text').textContent = actText;
         }
         
-        function addZhaoDialogue(text, speaker = '玩家') {
+        // ==================== 打字机队列系统 ====================
+        let _typeQueue = [];
+        let _isTyping = false;
+        
+        function waitForTypeQueueEmpty() {
+            return new Promise(resolve => {
+                function check() {
+                    if (_typeQueue.length === 0 && !_isTyping) resolve();
+                    else setTimeout(check, 50);
+                }
+                check();
+            });
+        }
+        
+        function _processTypeQueue() {
+            if (_isTyping || _typeQueue.length === 0) return;
+            _isTyping = true;
+            const job = _typeQueue.shift();
+            document.body.classList.add('typing-active');
+            document.body.classList.remove('choice-showing', 'choice-hovering');
+            job.messageDiv.classList.add('li-bai-message-typing');
+            
+            let charIndex = 0;
+            const pureTextLength = job.rawText.replace(/<[^>]*>/g, '').length;
+            const baseSpeed = pureTextLength < 20 ? 80 : (pureTextLength < 50 ? 55 : 45);
+            
+            function typeNextChar() {
+                if (charIndex >= job.rawChars.length) {
+                    job.cursorSpan.style.display = 'none';
+                    job.messageDiv.classList.remove('li-bai-message-typing');
+                    if (_typeQueue.length === 0) {
+                        document.body.classList.remove('typing-active');
+                        _isTyping = false;
+                    } else {
+                        _processTypeQueue();
+                    }
+                    job.targetSpan.innerHTML = job.rawText;
+                    if (typeof refreshKeywordSpans === 'function') refreshKeywordSpans();
+                    job.resolve();
+                    return;
+                }
+                const item = job.rawChars[charIndex++];
+                job.targetSpan.innerHTML += item.value;
+                const dialogueLog = document.getElementById('dialogue-log');
+                dialogueLog.scrollTop = dialogueLog.scrollHeight;
+                let delay = baseSpeed;
+                if (item.type === 'char' && '，。！？、；：'.includes(item.value)) delay += 150;
+                else if (item.type === 'char' && item.value === ' ') delay -= 10;
+                setTimeout(typeNextChar, delay);
+            }
+            setTimeout(typeNextChar, 100);
+        }
+        
+        function addZhaoDialogue(text, speaker) {
             const dialogueLog = document.getElementById('dialogue-log');
-            if (!dialogueLog) return;
             const messageDiv = document.createElement('div');
-            messageDiv.className = speaker === '赵云' ? 'zhao-message' : 'player-message';
+            messageDiv.className = speaker === '赵云' ? 'li-bai-message' : 'player-message';
             const speakerName = speaker === '赵云' ? '赵云' : '玩家';
-            messageDiv.innerHTML = `<strong>${speakerName}：</strong> ${text}`;
+            messageDiv.innerHTML = `<strong>${speakerName}：</strong> <span class="type-target"></span><span class="type-cursor">▍</span>`;
             dialogueLog.appendChild(messageDiv);
             dialogueLog.scrollTop = dialogueLog.scrollHeight;
-        }
-        
-        function startZhaoFirstAct() {
-            const actNumberElement = document.getElementById('act-number');
-            const actTextElement = document.getElementById('act-text');
-            if (actNumberElement) actNumberElement.textContent = zhaoState.currentAct;
-            if (actTextElement) {
-                const chineseNumbers = ['一', '二', '三', '四', '五'];
-                actTextElement.textContent = chineseNumbers[zhaoState.currentAct - 1] || '一';
+            
+            if (typeof gameState !== 'undefined' && gameState) {
+                if (!Array.isArray(gameState.dialogueHistory)) gameState.dialogueHistory = [];
+                gameState.dialogueHistory.push({
+                    text: text,
+                    speaker: speaker === '赵云' ? 'hero' : 'player',
+                    heroName: speaker,
+                    timestamp: new Date().toISOString()
+                });
+                try { localStorage.setItem('game_dialogue_history', JSON.stringify(gameState.dialogueHistory)); } catch(e) {}
             }
-            switch(zhaoState.currentStep) {
-                case 'opening':
-                    zhaoState.isGameStarted = true;
-                    showOpeningDialogues();
-                    break;
-                case 'explore':
-                    updateZhaoOptions();
-                    break;
-                case 'quiz':
-                    enterQuizStep();
-                    break;
-                case 'choice':
-                    enterChoiceStep();
-                    break;
-                default:
-                    showOpeningDialogues();
+            
+            const targetSpan = messageDiv.querySelector('.type-target');
+            const cursorSpan = messageDiv.querySelector('.type-cursor');
+            if (speaker !== '赵云') {
+                targetSpan.innerHTML = text;
+                cursorSpan.style.display = 'none';
+                return Promise.resolve();
             }
-        }
-        
-        function showOpeningDialogues() {
-            zhaoState.currentStep = 'opening';
-            const dialogueLog = document.getElementById('dialogue-log');
-            if (dialogueLog) dialogueLog.innerHTML = '';
-            gameContent.opening.dialogues.forEach((dialogue, index) => {
-                setTimeout(() => {
-                    addZhaoDialogue(dialogue.text, dialogue.speaker);
-                    if (index === gameContent.opening.dialogues.length - 1) {
-                        setTimeout(enterExploreStep, 500);
-                    }
-                }, index * 1500);
+            const rawChars = [];
+            let i = 0;
+            while (i < text.length) {
+                if (text[i] === '<') {
+                    let tagEnd = text.indexOf('>', i);
+                    if (tagEnd === -1) tagEnd = text.length;
+                    rawChars.push({ type: 'tag', value: text.slice(i, tagEnd + 1) });
+                    i = tagEnd + 1;
+                } else {
+                    rawChars.push({ type: 'char', value: text[i] });
+                    i++;
+                }
+            }
+            return new Promise(resolve => {
+                _typeQueue.push({ targetSpan, cursorSpan, messageDiv, rawChars, rawText: text, resolve });
+                _processTypeQueue();
             });
+        }
+        
+        function addThinkingBubble(text) {
+            const dialogueLog = document.getElementById('dialogue-log');
+            const div = document.createElement('div');
+            div.className = 'li-bai-thinking';
+            div.textContent = text;
+            dialogueLog.appendChild(div);
+            dialogueLog.scrollTop = dialogueLog.scrollHeight;
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    div.classList.add('thinking-fade-out');
+                    setTimeout(() => { div.remove(); resolve(); }, 500);
+                }, 1600);
+            });
+        }
+        
+        // ==================== 剧情逻辑 ====================
+        async function startZhaoFirstAct() {
+            zhaoState.currentAct = 1;
+            zhaoState.currentStep = 'opening';
+            zhaoState.exploredOptions = { option1: false, option2: false };
+            zhaoState.actCourageChoices = 0;
+            zhaoState.actGuardChoices = 0;
+            zhaoState._isAnswering = false;
+            
+            document.getElementById('dialogue-log').innerHTML = '';
+            updateZhaoStats();
+            
+            // 开场白：去掉重复的关键词标签，仅用普通加粗，避免重复收集
+            await addZhaoDialogue("苍天翔龙，一往无前！我乃赵云，此地<b>武侯祠</b>，千年忠义所聚。今日有我守护，你可愿随我并肩作战？<b>武侯祠的守护</b>，从不迟到。", '赵云');
+            await addZhaoDialogue("武侯祠不只是古迹，它承载着守护的信念。智能监控与人工巡查双轨制，让每一处角落都在视野之中。你有什么想了解的？", '赵云');
+            
+            zhaoState.currentStep = 'explore';
+            await enterExploreStep();
             saveZhaoState();
         }
         
-        function enterExploreStep() {
-            zhaoState.currentStep = 'explore';
+        async function enterExploreStep() {
+            await waitForTypeQueueEmpty();
             updateZhaoOptions();
-            saveZhaoState();
         }
         
         function updateZhaoOptions() {
-            const optionsContainer = document.getElementById('zhao-options');
-            if (!optionsContainer) return;
+            const optionsContainer = document.getElementById('li-bai-options');
             optionsContainer.innerHTML = '';
+            
             const btn1 = document.createElement('button');
             const btn2 = document.createElement('button');
             const btn3 = document.createElement('button');
-            btn1.className = 'zhao-option';
-            btn2.className = 'zhao-option';
-            btn3.className = 'zhao-option';
+            
+            btn1.className = 'li-bai-option';
+            btn2.className = 'li-bai-option';
+            btn3.className = 'li-bai-option';
+            
             switch(zhaoState.currentStep) {
                 case 'explore':
-                    btn1.textContent = gameContent.exploreOptions.option1.label;
-                    btn2.textContent = gameContent.exploreOptions.option2.label;
-                    btn3.textContent = "前往下一站";
+                    btn1.innerHTML = "师傅，武侯祠的游客安保体系是怎么运作的？";
+                    btn1.setAttribute('data-type', 'courage');
+                    btn1.setAttribute('data-mood', 'rational');
+                    btn1.setAttribute('data-risk', 'low');
+                    
+                    btn2.innerHTML = "千年古祠如何在现代旅游中保持文化传承？";
+                    btn2.setAttribute('data-type', 'guard');
+                    btn2.setAttribute('data-mood', 'emotional');
+                    btn2.setAttribute('data-risk', 'high');
+                    
+                    btn3.style.display = 'none';
+                    
                     if (zhaoState.exploredOptions.option1) { btn1.disabled = true; btn1.style.opacity = '0.5'; }
                     if (zhaoState.exploredOptions.option2) { btn2.disabled = true; btn2.style.opacity = '0.5'; }
-                    btn3.style.display = 'none';
+                    
                     btn1.onclick = () => exploreOption1();
                     btn2.onclick = () => exploreOption2();
                     break;
+                    
                 case 'quiz':
-                    btn1.textContent = gameContent.quiz.options[0].text;
-                    btn2.textContent = gameContent.quiz.options[1].text;
-                    btn3.textContent = "前往下一站";
+                    btn1.innerHTML = "技术为盾，人为剑。智能系统提供全域覆盖，但最终决策与行动依赖人的勇气与判断。";
+                    btn1.setAttribute('data-risk', 'low');
+                    btn2.innerHTML = "靠技术就够了，人只是辅助。";
+                    btn2.setAttribute('data-risk', 'high');
                     btn3.style.display = 'none';
                     btn1.onclick = () => quizAnswer(true);
                     btn2.onclick = () => quizAnswer(false);
                     break;
+                    
                 case 'choice':
-                    btn1.textContent = gameContent.finalChoice.options[0].text;
-                    btn2.textContent = gameContent.finalChoice.options[1].text;
+                    btn1.innerHTML = "勇气！冲锋在前，方为战士本色。直面挑战，一往无前。";
+                    btn1.setAttribute('data-type', 'courage');
+                    btn1.setAttribute('data-mood', 'rational');
+                    btn1.setAttribute('data-risk', 'low');
+                    
+                    btn2.innerHTML = "守护！守卫所珍视之物，才是勇气的真义。坚守后方，护佑众生。";
+                    btn2.setAttribute('data-type', 'guard');
+                    btn2.setAttribute('data-mood', 'emotional');
+                    btn2.setAttribute('data-risk', 'high');
+                    
                     btn3.textContent = "前往下一站";
+                    
+                    if (zhaoState.actCourageChoices >= 2) { btn1.disabled = true; btn1.style.opacity = '0.5'; }
+                    if (zhaoState.actGuardChoices >= 2) { btn2.disabled = true; btn2.style.opacity = '0.5'; }
+                    
                     if (zhaoState.courage > 0 || zhaoState.guard > 0) {
                         btn3.style.display = 'inline-block';
                         btn3.onclick = nextScene;
                     } else {
                         btn3.style.display = 'none';
                     }
+                    
                     btn1.onclick = () => finalChoice('courage');
                     btn2.onclick = () => finalChoice('guard');
                     break;
             }
+            
             optionsContainer.appendChild(btn1);
             optionsContainer.appendChild(btn2);
             optionsContainer.appendChild(btn3);
+            document.body.classList.add('choice-showing');
             updateZhaoStats();
         }
         
-        function exploreOption1() {
-            addZhaoDialogue(gameContent.exploreOptions.option1.text, '玩家');
-            setTimeout(() => {
-                addZhaoDialogue(gameContent.exploreOptions.option1.response.text, '赵云');
-            }, 800);
+        async function exploreOption1() {
+            document.getElementById('li-bai-options').innerHTML = '';
+            await addZhaoDialogue("师傅，武侯祠的游客安保体系是怎么运作的？", '玩家');
+            await addThinkingBubble("赵云挺直腰板，目光扫过祠内四周。");
+            await addZhaoDialogue("好问题！此祠采用<span class=\"keyword\" data-id=\"zhao_1_1\" data-name=\"智能监控与人工巡查双轨制\">智能监控与人工巡查双轨制</span>，覆盖全区域无死角。危急时刻，<span class=\"keyword\" data-id=\"zhao_1_2\" data-name=\"3分钟内响应到位\">3分钟内响应到位</span>。守护，不是守在门口，而是时刻准备着。勇气，是行动力。", '赵云');
+            
             zhaoState.exploredOptions.option1 = true;
             updateZhaoStats();
-            setTimeout(() => checkAllExplored(), 1500);
+            await checkAllExplored();
             saveZhaoState();
         }
         
-        function exploreOption2() {
-            addZhaoDialogue(gameContent.exploreOptions.option2.text, '玩家');
-            setTimeout(() => {
-                addZhaoDialogue(gameContent.exploreOptions.option2.response.text, '赵云');
-            }, 800);
+        async function exploreOption2() {
+            document.getElementById('li-bai-options').innerHTML = '';
+            await addZhaoDialogue("千年古祠如何在现代旅游中保持文化传承？", '玩家');
+            await addThinkingBubble("赵云望向祠内的AR设备，微微点头。");
+            await addZhaoDialogue("古祠以<span class=\"keyword\" data-id=\"zhao_1_3\" data-name=\"AR还原三国战场\">AR还原三国战场</span>与传统祭祀并行——让历史活起来，同时保留香火祭拜的仪式感。守护，是让过去活在当下。真正的勇者，既能冲锋陷阵，也能守护传承。", '赵云');
+            
             zhaoState.exploredOptions.option2 = true;
             updateZhaoStats();
-            setTimeout(() => checkAllExplored(), 1500);
+            await checkAllExplored();
             saveZhaoState();
         }
         
-        function checkAllExplored() {
+        async function checkAllExplored() {
             const exploredCount = (zhaoState.exploredOptions.option1 ? 1 : 0) + (zhaoState.exploredOptions.option2 ? 1 : 0);
             if (exploredCount === 2) {
                 setTimeout(() => {
@@ -332,84 +403,125 @@
                     enterQuizStep();
                 }, 1000);
             } else {
+                await waitForTypeQueueEmpty();
                 updateZhaoOptions();
             }
         }
         
-        function enterQuizStep() {
-            const optionsContainer = document.getElementById('zhao-options');
-            if (optionsContainer) optionsContainer.innerHTML = '';
-            setTimeout(() => {
-                addZhaoDialogue(gameContent.quiz.question, '赵云');
-                setTimeout(() => updateZhaoOptions(), 800);
-            }, 500);
+        async function enterQuizStep() {
+            await addZhaoDialogue("我来验验你的胆识：武侯祠安保体系的核心，是'技术'还是'人'？", '赵云');
+            zhaoState.currentStep = 'quiz';
+            await waitForTypeQueueEmpty();
+            updateZhaoOptions();
             saveZhaoState();
         }
         
-        function quizAnswer(isCorrect) {
-            const response = isCorrect ? gameContent.quiz.responses.correct : gameContent.quiz.responses.incorrect;
-            addZhaoDialogue(gameContent.quiz.options[isCorrect ? 0 : 1].text, '玩家');
-            setTimeout(() => {
-                addZhaoDialogue(response, '赵云');
-                setTimeout(() => {
-                    zhaoState.currentStep = 'choice';
-                    enterChoiceStep();
-                }, 1000);
-            }, 800);
-            saveZhaoState();
-        }
-        
-        function enterChoiceStep() {
-            const optionsContainer = document.getElementById('zhao-options');
-            if (optionsContainer) optionsContainer.innerHTML = '';
-            setTimeout(() => {
-                addZhaoDialogue(gameContent.finalChoice.question, '赵云');
-                setTimeout(() => updateZhaoOptions(), 800);
-            }, 500);
-            saveZhaoState();
-        }
-        
-        function finalChoice(type) {
-            if (type === 'courage') {
-                addZhaoDialogue(gameContent.finalChoice.options[0].text, '玩家');
-                if (!zhaoState._locked) zhaoState.courage++;
+        async function quizAnswer(isCorrect) {
+            if (zhaoState._isAnswering) return;
+            zhaoState._isAnswering = true;
+            document.getElementById('li-bai-options').innerHTML = '';
+            
+            if (isCorrect) {
+                await addZhaoDialogue("技术为盾，人为剑。智能系统提供全域覆盖，但最终决策与行动依赖人的勇气与判断。", '玩家');
+                await addThinkingBubble("赵云赞许地点头。");
+                await addZhaoDialogue("好！你理解了——再精密的系统，也需要勇者来驾驭。勇气是第一战力。", '赵云');
             } else {
-                addZhaoDialogue(gameContent.finalChoice.options[1].text, '玩家');
-                if (!zhaoState._locked) zhaoState.guard++;
+                await addZhaoDialogue("靠技术就够了，人只是辅助。", '玩家');
+                await addThinkingBubble("赵云摇头。");
+                await addZhaoDialogue("错了。再强的盾，也需要持盾之人。技术是工具，勇气才是根本。", '赵云');
             }
-            
-            // 检查成就：勇气选择累计3次
-            if (zhaoState.courage >= 3) {
-                unlockAchievement('zhao_courage', '勇者无畏', '在赵云线完成三次勇气选择');
-            }
-            // 检查成就：守护选择累计3次
-            if (zhaoState.guard >= 3) {
-                unlockAchievement('zhao_guard', '守护者', '在赵云线完成三次守护选择');
-            }
-            
-            const response = gameContent.finalChoice.responses[type];
-            setTimeout(() => {
-                addZhaoDialogue(response, '赵云');
-                setTimeout(() => updateZhaoOptions(), 800);
-            }, 800);
-            updateZhaoStats();
+            zhaoState.currentStep = 'choice';
+            await enterChoiceStep();
             saveZhaoState();
         }
         
-        function nextScene() {
+        async function enterChoiceStep() {
+            await addZhaoDialogue("那么，此地最令你在意的，是那份'直面危险的勇气'，还是那份'守护传承的决心'？", '赵云');
+            zhaoState.currentStep = 'choice';
+            await waitForTypeQueueEmpty();
+            updateZhaoOptions();
             saveZhaoState();
+        }
+        
+        async function finalChoice(type) {
+            document.getElementById('li-bai-options').innerHTML = '';
+            
+            if (type === 'courage' && zhaoState.actCourageChoices >= 2) {
+                await addZhaoDialogue("勇气！冲锋在前，方为战士本色。直面挑战，一往无前。", '玩家');
+                await addZhaoDialogue("勇者无惧，但过于刚猛易折。换条路走吧！", '赵云');
+                await waitForTypeQueueEmpty();
+                updateZhaoOptions();
+                return;
+            }
+            if (type === 'guard' && zhaoState.actGuardChoices >= 2) {
+                await addZhaoDialogue("守护！守卫所珍视之物，才是勇气的真义。坚守后方，护佑众生。", '玩家');
+                await addZhaoDialogue("守护之心可敬，但也要敢于亮剑。换个方向？", '赵云');
+                await waitForTypeQueueEmpty();
+                updateZhaoOptions();
+                return;
+            }
+            
+            if (type === 'courage') {
+                zhaoState.actCourageChoices += 1;
+                await addZhaoDialogue("勇气！冲锋在前，方为战士本色。直面挑战，一往无前。", '玩家');
+                await addThinkingBubble("赵云握紧长枪，眼中闪光。");
+                if (zhaoState.actCourageChoices === 1) {
+                    await addZhaoDialogue("善！勇者无惧，一骑当千。有此胆魄，不愧为吾弟子。", '赵云');
+                } else {
+                    await addZhaoDialogue("又是勇气！你对冲锋的执着，让我想起年轻时的自己。", '赵云');
+                    if (typeof unlockAchievement === 'function') unlockAchievement('zhao_courage_repeat');
+                }
+                if (!zhaoState._locked) zhaoState.courage += 1;
+            } else {
+                zhaoState.actGuardChoices += 1;
+                await addZhaoDialogue("守护！守卫所珍视之物，才是勇气的真义。坚守后方，护佑众生。", '玩家');
+                await addThinkingBubble("赵云收起长枪，神色庄严。");
+                if (zhaoState.actGuardChoices === 1) {
+                    await addZhaoDialogue("好！大勇若怯，大智若愚。懂得守护，方为大将。", '赵云');
+                } else {
+                    await addZhaoDialogue("守护...你心中有珍视的东西，这份坚持可敬。", '赵云');
+                    if (typeof unlockAchievement === 'function') unlockAchievement('zhao_guard_repeat');
+                }
+                if (!zhaoState._locked) zhaoState.guard += 1;
+            }
+            
+            saveZhaoState();
+            await waitForTypeQueueEmpty();
+            updateZhaoOptions();
+        }
+        
+        async function nextScene() {
+            await addZhaoDialogue("前往下一站", '玩家');
+            await addThinkingBubble("赵云转身，望向锦江方向。");
+            await addZhaoDialogue("好！下一站是锦江，那里有另一场试炼等着我们。走！", '赵云');
+            
             saveProgress('zhaoYun', 2);
-            window.location.href = 'zhao_yun_act2.html';
+            saveZhaoState();
+            window.location.href = "zhao_yun_act2.html";
         }
         
+        // ==================== 事件绑定 ====================
         function bindZhaoEvents() {
-            const goHomeBtn = document.querySelector('[data-action="go-home"]');
-            if (goHomeBtn) {
-                goHomeBtn.addEventListener('click', function() {
-                    window.location.href = '../index.html';
+            // 返回首页按钮已移除（选关面板取代）
+            
+            const optionsContainer = document.getElementById('li-bai-options');
+            if (optionsContainer) {
+                optionsContainer.addEventListener('mouseover', function(e) {
+                    const btn = e.target.closest('.li-bai-option');
+                    if (!btn || btn.disabled) return;
+                    document.body.classList.add('choice-hovering');
+                    const mood = btn.getAttribute('data-mood');
+                    if (mood === 'rational') document.body.classList.add('choice-hover-rational');
+                    else if (mood === 'emotional') document.body.classList.add('choice-hover-emotional');
+                });
+                optionsContainer.addEventListener('mouseout', function() {
+                    document.body.classList.remove('choice-hovering', 'choice-hover-rational', 'choice-hover-emotional');
                 });
             }
         }
     </script>
+    
+    <!-- 游蜀笔记侧边栏容器 -->
+    <div class="notebook-sidebar" id="notebook-sidebar"></div>
 </body>
 </html>

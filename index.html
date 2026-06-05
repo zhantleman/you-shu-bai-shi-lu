@@ -7,6 +7,11 @@
     <link rel="icon" type="image/svg+xml" href="genie.svg">
     <meta name="description" content="游蜀拜师录 — 王者荣耀电竞文旅互动网页游戏">
     
+    <!-- Google Fonts: Noto Serif SC 国风衬线体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
     <!-- 引用公共CSS -->
     <link rel="stylesheet" href="css/style.css">
     
@@ -26,7 +31,7 @@
             padding: 40px 20px;
             position: relative;
             overflow: hidden;
-            background: #0a0a0a;
+            background: #0D0F1A;
         }
 
         /* 背景层：主界面背景图 */
@@ -52,8 +57,8 @@
             right: 0;
             bottom: 0;
             background:
-                radial-gradient(ellipse 70% 50% at 50% 55%, rgba(96, 224, 255, 0.06) 0%, transparent 60%),
-                radial-gradient(ellipse 100% 80% at 50% 50%, transparent 30%, rgba(5, 5, 10, 0.7) 70%, rgba(5, 5, 10, 0.95) 100%);
+                radial-gradient(ellipse 70% 50% at 50% 55%, rgba(255, 215, 0, 0.05) 0%, transparent 60%),
+                radial-gradient(ellipse 100% 80% at 50% 50%, transparent 30%, rgba(13, 15, 26, 0.7) 70%, rgba(13, 15, 26, 0.95) 100%);
             pointer-events: none;
             z-index: 0;
         }
@@ -75,7 +80,7 @@
             width: 2px;
             height: 2px;
             border-radius: 50%;
-            background: rgba(96, 224, 255, 0.5);
+            background: rgba(255, 215, 0, 0.4);
             animation: particleFloat linear infinite;
         }
 
@@ -130,10 +135,10 @@
 
         .corner-btn:hover {
             background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(96, 224, 255, 0.4);
+            border-color: rgba(255, 215, 0, 0.4);
             color: #fff;
             transform: scale(1.1);
-            box-shadow: 0 0 15px rgba(96, 224, 255, 0.2);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
         }
 
         .corner-btn .tooltip {
@@ -161,7 +166,7 @@
             font-size: 4rem;
             font-weight: 800;
             margin-bottom: 12px;
-            background: linear-gradient(45deg, #60E0FF, #D4AF37, #FF8C00, #C82828);
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -177,7 +182,7 @@
             top: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(45deg, #60E0FF, #D4AF37, #FF8C00, #C82828);
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -197,12 +202,12 @@
             margin: 16px auto 24px;
             background: linear-gradient(90deg,
                 transparent 0%,
-                rgba(96, 224, 255, 0.06) 15%,
-                rgba(212, 175, 55, 0.08) 50%,
-                rgba(96, 224, 255, 0.06) 85%,
+                rgba(255, 215, 0, 0.06) 15%,
+                rgba(255, 215, 0, 0.08) 50%,
+                rgba(255, 215, 0, 0.06) 85%,
                 transparent 100%);
-            border-top: 1px solid rgba(212, 175, 55, 0.25);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+            border-top: 1px solid rgba(255, 215, 0, 0.25);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.25);
             position: relative;
         }
 
@@ -213,7 +218,7 @@
             top: 50%;
             width: 60px;
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.4));
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.4));
         }
         .hero-banner::before { left: -30px; }
         .hero-banner::after { right: -30px; transform: rotate(180deg); }
@@ -225,7 +230,7 @@
 
         .hero-slogan {
             font-size: 1.1rem;
-            color: rgba(212, 175, 55, 0.85);
+            color: rgba(255, 215, 0, 0.85);
             letter-spacing: 0.3em;
             font-weight: 500;
         }
@@ -294,9 +299,9 @@
             height: 180px;
             background: conic-gradient(from 180deg at 50% 0%,
                 transparent 38%,
-                rgba(96, 224, 255, 0.07) 45%,
+                rgba(255, 215, 0, 0.07) 45%,
                 rgba(255, 255, 255, 0.06) 50%,
-                rgba(96, 224, 255, 0.07) 55%,
+                rgba(255, 215, 0, 0.07) 55%,
                 transparent 62%);
             clip-path: polygon(40% 0%, 60% 0%, 100% 100%, 0% 100%);
             opacity: 0;
@@ -334,7 +339,7 @@
             right: -10px;
             bottom: -10px;
             border-radius: 20px;
-            background: linear-gradient(45deg, #60E0FF, #C82828, #D4AF37);
+            background: linear-gradient(45deg, #A855F7, #DC2626, #FFD700);
             z-index: -1;
             opacity: 0;
             transition: opacity 0.4s ease;
@@ -390,8 +395,8 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            border: 3px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 15px rgba(96, 224, 255, 0.4), 0 4px 12px rgba(0, 0, 0, 0.5);
+            border: 3px solid rgba(255, 215, 0, 0.8);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.5);
             overflow: hidden;
             margin: -44px auto 0;
             position: relative;
@@ -400,7 +405,7 @@
         }
 
         .mentor-card-wrapper:hover .mentor-avatar {
-            box-shadow: 0 0 30px rgba(96, 224, 255, 0.7), 0 4px 16px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5), 0 4px 16px rgba(0, 0, 0, 0.6);
             transform: scale(1.08);
         }
 
@@ -517,14 +522,14 @@
         }
 
         .soul-btn.unlocked {
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(96, 224, 255, 0.2));
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(59, 130, 246, 0.2));
             border-color: rgba(168, 85, 247, 0.5);
             cursor: pointer;
             animation: soulGlow 2s ease-in-out infinite alternate;
         }
 
         .soul-btn.unlocked:hover {
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.35), rgba(96, 224, 255, 0.35));
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.35), rgba(59, 130, 246, 0.35));
             transform: translateY(-4px) scale(1.03);
             box-shadow: 0 10px 40px rgba(168, 85, 247, 0.3), 0 0 60px rgba(168, 85, 247, 0.15);
         }
@@ -635,7 +640,7 @@
         }
 
         .resume-dialog .act-name {
-            color: #60E0FF;
+            color: #FFD700;
         }
 
         .resume-buttons {
@@ -655,13 +660,13 @@
         }
 
         .resume-btn-primary {
-            background: linear-gradient(135deg, #60E0FF, #0066CC);
-            color: white;
+            background: linear-gradient(135deg, #FFD700, #F0A500);
+            color: #1a1a2e;
         }
 
         .resume-btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(96, 224, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
         }
 
         .resume-btn-secondary {
@@ -702,10 +707,10 @@
         /* ===== 标题光晕动画（增强版） ===== */
         @keyframes titleGlow {
             0% {
-                filter: brightness(1) drop-shadow(0 0 15px rgba(96, 224, 255, 0.4)) drop-shadow(0 0 40px rgba(212, 175, 55, 0.15));
+                filter: brightness(1) drop-shadow(0 0 15px rgba(255, 215, 0, 0.4)) drop-shadow(0 0 40px rgba(255, 160, 0, 0.15));
             }
             100% {
-                filter: brightness(1.25) drop-shadow(0 0 25px rgba(96, 224, 255, 0.6)) drop-shadow(0 0 60px rgba(212, 175, 55, 0.25));
+                filter: brightness(1.25) drop-shadow(0 0 25px rgba(255, 215, 0, 0.6)) drop-shadow(0 0 60px rgba(255, 160, 0, 0.25));
             }
         }
 
@@ -953,7 +958,7 @@
     <!-- 页面特有JavaScript -->
     <script>
         // 当前待续玩的英雄ID
-        let pendingResumeHero = null;
+        let pendingResumeHero = null; // [待清理] 废弃变量，续玩功能已改为选关系统
 
         // ===== 粒子系统 =====
         function createParticles() {
@@ -969,11 +974,11 @@
                 p.style.animationDelay = (Math.random() * 10) + 's';
                 p.style.width = (1.5 + Math.random() * 2) + 'px';
                 p.style.height = p.style.width;
-                // 随机颜色：琉璃青/墨金/紫
+                // 随机颜色：亮金/紫丁香/靛蓝
                 const colors = [
-                    'rgba(96, 224, 255, 0.4)',
-                    'rgba(212, 175, 55, 0.35)',
-                    'rgba(168, 85, 247, 0.3)'
+                    'rgba(255, 215, 0, 0.4)',
+                    'rgba(168, 85, 247, 0.35)',
+                    'rgba(59, 130, 246, 0.3)'
                 ];
                 p.style.background = colors[Math.floor(Math.random() * colors.length)];
                 container.appendChild(p);
@@ -1012,21 +1017,7 @@
                 });
             });
 
-            // 右上角功能按钮绑定
-            const cornerBtns = document.querySelectorAll('.corner-btn');
-            cornerBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const action = this.getAttribute('data-action');
-                    switch(action) {
-                        case 'achievements':
-                            navigateTo('achievements');
-                            break;
-                        case 'settings':
-                            navigateTo('settings');
-                            break;
-                    }
-                });
-            });
+            // 右上角功能按钮绑定（由 common.js bindCommonEvents 统一处理，不再重复绑定）
 
             // 绑定续玩弹窗按钮
             document.getElementById('resume-continue-btn').addEventListener('click', function() {
@@ -1141,30 +1132,14 @@
         }
 
         // 处理英雄选择（有进度时弹窗，无进度时直接开始）
+        // 处理英雄选择 → 统一进入选关界面（不再直接跳幕）
         function handleHeroSelect(heroId) {
             // 首次游戏成就
             unlockAchievement('first_game', '初入蜀地', '第一次开始游戏');
             
-            const progress = getProgress(heroId);
-            const acts = heroActs[heroId];
-
-            // 没有进度 或 已通关 → 从头开始
-            if (progress <= 0 || progress >= acts.length) {
-                goToAct(heroId, 1);
-                return;
-            }
-
-            // 有未完成进度 → 弹窗选择
-            pendingResumeHero = heroId;
-            const actName = acts[Math.min(progress - 1, acts.length - 1)].name;
-            const heroName = heroes[heroId].name;
-
-            document.getElementById('resume-title').textContent = `${heroName}的旅程`;
-            document.getElementById('resume-act-name').textContent = actName;
-            document.getElementById('resume-message').innerHTML =
-                `你上次进行到了<span class="act-name">${actName}</span>，要继续吗？`;
-
-            openResumeDialog();
+            // 统一跳转到该英雄的选关入口页
+            const entryPath = getRootPath() + heroActs[heroId][0].file.replace(/[^/]+$/, '') + 'index.html';
+            window.location.href = entryPath;
         }
 
         // 打开续玩弹窗
@@ -1181,7 +1156,6 @@
         // 更新游魂鉴定按钮状态
         function updateSoulButton() {
             const btn = document.getElementById('soul-analysis-btn');
-            const hint = document.getElementById('soul-hint');
             if (!btn) return;
 
             if (isSoulAnalysisUnlocked()) {
@@ -1189,15 +1163,11 @@
                 btn.classList.add('unlocked');
                 btn.title = '鉴定你的蜀地游魂本相';
                 // 破碎锁链动画由CSS自动触发
-                // 更新提示文字
-                if (hint) {
-                    hint.textContent = '揭示你的蜀地游魂本相';
-                    hint.style.color = 'rgba(168, 85, 247, 0.5)';
-                }
-                // 点击跳转
-                btn.addEventListener('click', function() {
+                // 点击跳转（使用onclick替换，避免addEventListener累积绑定）
+                btn.onclick = function() {
+                    unlockAchievement('soul_analysis_unlock', '游魂觉醒', '完成全三线并解锁游魂鉴定报告');
                     window.location.href = 'soul_analysis.html';
-                });
+                };
             }
         }
     </script>

@@ -10,8 +10,9 @@ const gameState = {
     stats: {
         poem: 5,          // 诗心（李白）
         wine: 3,          // 酒意（李白）
-        intelligence: 4,  // 智谋（诸葛亮）
-        efficiency: 6,    // 效率（诸葛亮）
+        food: 0,          // 粮草（诸葛亮）
+        gear: 0,          // 军械（诸葛亮）
+        people: 0,        // 民心（诸葛亮）
         courage: 7,       // 勇气（赵云）
         guard: 4          // 守护（赵云）
     },
@@ -37,21 +38,21 @@ const heroes = {
         name: '李白',
         title: '青莲剑仙 · 诗酒剑意',
         description: '诗心与酒意的融合，创造无限可能。',
-        color: '#60E0FF',
+        color: '#A855F7',
         icon: '🍷'
     },
     zhugeLiang: {
         name: '诸葛亮',
-        title: '绝代智谋 · 一步三算',
-        description: '智谋与效率的结合，规划完美战略。',
-        color: '#0066CC',
-        icon: '🎯'
+        title: '绝代智谋 · 隆中对弈',
+        description: '粮草、军械、民心，三军未动粮草先行。',
+        color: '#3B82F6',
+        icon: '🧮'
     },
     zhaoYun: {
         name: '赵云',
         title: '苍天翔龙 · 勇者之誓',
         description: '勇气与守护的融合，成就无敌战神。',
-        color: '#C8C8D7',
+        color: '#DC2626',
         icon: '⚔️'
     }
 };
@@ -59,10 +60,12 @@ const heroes = {
 // 获取网站根目录（解决子目录下的相对路径问题）
 function getRootPath() {
     const path = window.location.pathname;
-    // 计算当前文件所在目录的深度
-    const parts = path.split('/').filter(p => p && !p.endsWith('.html') && !p.endsWith('.htm'));
-    if (parts.length <= 1) return './';
-    return '../'.repeat(parts.length - 1);
+    // 去掉文件名，只保留目录部分
+    const dir = path.substring(0, path.lastIndexOf('/'));
+    // 过滤空段和盘符段（file:///C:/path → 盘符 C: 不应计入深度）
+    const parts = dir.split('/').filter(p => p && !/^[A-Za-z]:$/.test(p));
+    if (parts.length === 0) return './';
+    return '../'.repeat(parts.length);
 }
 
 // ==================== 本地存储工具函数 ====================
@@ -128,11 +131,11 @@ const heroActs = {
         { id: 5, name: '第五幕·蜀地解谜', file: 'libai/li_bai_act5_puzzle.html' }
     ],
     zhugeLiang: [
-        { id: 1, name: '第一幕·初到成都', file: 'zhuge/zhuge_act1.html' },
-        { id: 2, name: '第二幕·太古里探秘', file: 'zhuge/zhuge_act2.html' },
-        { id: 3, name: '第三幕·锦里寻踪', file: 'zhuge/zhuge_act3.html' },
-        { id: 4, name: '第四幕·策略博弈', file: 'zhuge/zhuge_act4_game.html' },
-        { id: 5, name: '第五幕·智谋问答', file: 'zhuge/zhuge_act5_quiz.html' }
+        { id: 1, name: '第一幕·西部智谷AG主场', file: 'zhuge/zhuge_act1.html' },
+        { id: 2, name: '第二幕·峡谷盛宴餐厅', file: 'zhuge/zhuge_act2.html' },
+        { id: 3, name: '第三幕·武侯祠', file: 'zhuge/zhuge_act3.html' },
+        { id: 4, name: '第四幕·隆中对弈', file: 'zhuge/zhuge_act4_game.html' },
+        { id: 5, name: '第五幕·取舍之道', file: 'zhuge/zhuge_act5.html' }
     ],
     zhaoYun: [
         { id: 1, name: '第一幕·武侯祠守卫战', file: 'zhaoyun/zhao_yun_act1.html' },
@@ -206,7 +209,7 @@ function goToAct(heroId, actId) {
     const act = acts.find(a => a.id === actId);
     if (act) {
         // 添加 fresh 参数，让目标页面知道需要从头开始对话
-        window.location.href = act.file + '?fresh=1';
+        window.location.href = getRootPath() + act.file + '?fresh=1';
     }
 }
 
@@ -227,7 +230,9 @@ function clearActStateOnFreshEntry(stateKey) {
         const keysToClean = {
             'liBaiState': ['liBai_gameStats', 'liBai_quizScore'],
             'zhugeState': ['zhuge_strategyCount', 'zhuge_efficiencyCount'],
-            'zhaoState': ['zhao_courage', 'zhao_guard']
+            // 注意：zhugeResources 是跨幕累计属性（粮草/军械/民心），不在此处清理
+            // 注意：不清理 zhaoState 的跨幕累计属性（zhao_courage/zhao_guard 由各页面独立 localStorage key 存储）
+            // zhaoState 本身（currentStep等）仍需清除以重置对话进度
         };
         if (keysToClean[stateKey]) {
             keysToClean[stateKey].forEach(key => localStorage.removeItem(key));
@@ -271,10 +276,57 @@ function getSoulData() {
 // 判断游魂鉴定是否解锁（三条线全部通关）
 function isSoulAnalysisUnlocked() {
     const progress = getAllProgress();
+    // 各线通关所需幕数不同：李白5幕/诸葛亮4幕/赵云5幕
+    // 诸葛亮线通关时 saveProgress('zhugeLiang',5) 统一标记为5
     const totalActs = 5;
     return (progress.liBai || 0) >= totalActs
         && (progress.zhugeLiang || 0) >= totalActs
         && (progress.zhaoYun || 0) >= totalActs;
+}
+
+// ==================== 诸葛亮线粮草/军械/民心资源系统 ====================
+
+// 保存诸葛亮线资源（跨幕累计）
+function saveZhugeResources(resources) {
+    try {
+        localStorage.setItem('zhugeResources', JSON.stringify(resources));
+        // 同步到全局状态
+        gameState.stats.food = resources.food || 0;
+        gameState.stats.gear = resources.gear || 0;
+        gameState.stats.people = resources.people || 0;
+        saveGameState();
+        console.log('诸葛亮线资源已保存', resources);
+    } catch (error) {
+        console.error('保存诸葛亮线资源失败:', error);
+    }
+}
+
+// 获取诸葛亮线资源
+// 数据来源优先级：1) 前三幕saveZhugeState写入的独立key（原始数据源，最高优先）
+//                 2) act4自身保存的zhugeResources（游戏缓存）
+function getZhugeResources() {
+    try {
+        // ① 最高优先：从前三幕 saveZhugeState() 写入的独立 key 读取（原始数据）
+        const rawFood = localStorage.getItem('zhuge_foodCount');
+        const rawGear = localStorage.getItem('zhuge_gearCount');
+        const rawPeople = localStorage.getItem('zhuge_peopleCount');
+
+        // 只要任一独立 key 存在，就视为有效数据源，优先使用
+        if (rawFood !== null || rawGear !== null || rawPeople !== null) {
+            return {
+                food: parseInt(rawFood) || 0,
+                gear: parseInt(rawGear) || 0,
+                people: parseInt(rawPeople) || 0
+            };
+        }
+
+        // ② 回退：读 act4 自身保存的游戏缓存
+        const saved = localStorage.getItem('zhugeResources');
+        if (saved) return JSON.parse(saved);
+    } catch (error) {
+        console.error('读取诸葛亮线资源失败:', error);
+    }
+    return { food: 0, gear: 0, people: 0 };
 }
 
 // 检查某条线是否已通关（soulData中有记录）
@@ -293,7 +345,7 @@ function getHeroFinalAttrs(heroId) {
     if (heroId === 'liBai') {
         return { poem: d.poem || 0, wine: d.wine || 0 };
     } else if (heroId === 'zhugeLiang') {
-        return { strategy: d.strategy || 0, efficiency: d.efficiency || 0 };
+        return { food: d.food || 0, gear: d.gear || 0, people: d.people || 0 };
     } else if (heroId === 'zhaoYun') {
         return { courage: d.courage || 0, guard: d.guard || 0 };
     }
@@ -301,17 +353,6 @@ function getHeroFinalAttrs(heroId) {
 }
 
 // ==================== 通用UI工具函数 ====================
-
-// 显示加载动画
-function showLoading() {
-    // 可以在这里添加加载动画
-    document.body.style.opacity = '0.8';
-}
-
-// 隐藏加载动画
-function hideLoading() {
-    document.body.style.opacity = '1';
-}
 
 // 显示提示消息
 function showMessage(message, type = 'info', duration = 3000) {
@@ -375,8 +416,17 @@ function selectHero(heroId) {
 
 // ==================== 成就系统函数 ====================
 
-// 解锁成就
+// 解锁成就（支持只传id，自动从allAchievements查找title/description）
 function unlockAchievement(id, title, description) {
+    // 如果缺少参数，从全局成就定义中查找
+    if (!title || !description) {
+        const def = allAchievements.find(a => a.id === id);
+        if (def) {
+            title = title || def.title;
+            description = description || def.description;
+        }
+    }
+    
     if (!gameState.achievements.some(ach => ach.id === id)) {
         gameState.achievements.push({
             id,
@@ -408,6 +458,32 @@ function getAllAchievements() {
     return gameState.achievements;
 }
 
+// 所有可能的成就定义（全局可用）
+var allAchievements = [
+    // 李白线成就
+    { id: 'libai_poetry_start', title: '意象初探', description: '进入第四幕·意象重构', icon: '📜', category: 'libai', points: 15 },
+    { id: 'libai_poetry_complete', title: '诗篇重构师', description: '完成李白线第四幕·意象重构', icon: '🧩', category: 'libai', points: 25 },
+    { id: 'libai_poet_immortal', title: '谪仙人', description: '在第四幕·意象重构中获得满分（≥130分）', icon: '✨', category: 'libai', points: 30 },
+    { id: 'libai_poetry_repeat', title: '诗心不渝', description: '在单幕中两次选择"诗"', icon: '📖', category: 'libai', points: 10 },
+    { id: 'libai_wine_repeat', title: '醉意朦胧', description: '在单幕中两次选择"酒"', icon: '🍷', category: 'libai', points: 10 },
+    { id: 'libai_complete', title: '李白线全通', description: '完成李白线全部五幕内容', icon: '🎭', category: 'libai', points: 30 },
+    // 诸葛亮线成就
+    { id: 'zhuge_duel_master', title: '隆中对弈', description: '完成诸葛亮线第四幕卡牌对战', icon: '♟️', category: 'zhuge', points: 25 },
+    { id: 'zhuge_food_repeat', title: '足食为先', description: '在单幕中两次选择"粮草"', icon: '🌾', category: 'zhuge', points: 10 },
+    { id: 'zhuge_gear_repeat', title: '利器善事', description: '在单幕中两次选择"军械"', icon: '⚔️', category: 'zhuge', points: 10 },
+    { id: 'zhuge_people_repeat', title: '得道多助', description: '在单幕中两次选择"民心"', icon: '🤝', category: 'zhuge', points: 10 },
+    { id: 'zhuge_complete', title: '诸葛亮线全通', description: '完成诸葛亮线全部五幕内容', icon: '🎭', category: 'zhuge', points: 30 },
+    // 赵云线成就
+    { id: 'zhao_courage_repeat', title: '勇者无畏', description: '在单幕中两次选择"勇气"', icon: '💪', category: 'zhao', points: 10 },
+    { id: 'zhao_guard_repeat', title: '守护者', description: '在单幕中两次选择"守护"', icon: '🛡️', category: 'zhao', points: 10 },
+    { id: 'zhao_complete', title: '赵云线全通', description: '完成赵云线全部五幕内容', icon: '🎭', category: 'zhao', points: 30 },
+    // 通用成就
+    { id: 'first_game', title: '初入蜀地', description: '第一次开始游戏', icon: '📍', category: 'general', points: 5 },
+    { id: 'all_heroes', title: '全能学徒', description: '体验所有三条英雄路线', icon: '🌟', category: 'general', points: 30 },
+    { id: 'soul_analysis_unlock', title: '游魂觉醒', description: '完成全三线并解锁游魂鉴定报告', icon: '👻', category: 'general', points: 40 },
+    { id: 'all_achievements', title: '完美收集者', description: '解锁所有成就', icon: '🏆', category: 'general', points: 50 }
+];
+
 // 检查全能学徒成就（体验所有三条英雄路线）
 function checkAllHeroesAchievement() {
     const progress = getAllProgress();
@@ -423,8 +499,8 @@ function checkAllHeroesAchievement() {
 
 // 检查完美收集者成就（解锁所有成就）
 function checkAllAchievementsAchievement() {
-    // 获取所有成就定义（从allAchievements变量），排除自身
-    const totalCount = typeof allAchievements !== 'undefined' ? allAchievements.length - 1 : 0;
+    // 获取所有成就定义（排除自身"完美收集者"）
+    const totalCount = allAchievements.length - 1;
     const unlockedCount = gameState.achievements.length;
     
     if (totalCount > 0 && unlockedCount >= totalCount) {
@@ -484,33 +560,6 @@ function applySettings() {
     // 应用主题
     document.body.classList.remove('theme-dark', 'theme-light');
     document.body.classList.add(`theme-${gameState.settings.theme}`);
-}
-
-// ==================== 通用工具函数 ====================
-
-// 延迟执行
-function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-// 生成随机整数
-function randomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-// 格式化时间（秒转换为分:秒）
-function formatTime(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-}
-
-// 创建DOM元素
-function createElement(tag, className, content) {
-    const element = document.createElement(tag);
-    if (className) element.className = className;
-    if (content) element.textContent = content;
-    return element;
 }
 
 // ==================== BGM 音乐管理器 ====================
@@ -828,10 +877,6 @@ window.saveSettings = saveSettings;
 window.loadSettings = loadSettings;
 window.applySettings = applySettings;
 window.showMessage = showMessage;
-window.delay = delay;
-window.randomInt = randomInt;
-window.formatTime = formatTime;
-window.createElement = createElement;
 window.saveProgress = saveProgress;
 window.getProgress = getProgress;
 window.getAllProgress = getAllProgress;
@@ -905,7 +950,7 @@ const modalManager = {
             closeBtn.className = 'modal-close-btn';
             closeBtn.innerHTML = '&times;';
             closeBtn.addEventListener('click', () => this.close());
-            modal.appendChild(closeBtn);
+            document.body.appendChild(closeBtn);
             
             // 组装并添加到body
             overlay.appendChild(modal);
@@ -962,6 +1007,8 @@ const modalManager = {
         
         // 动画结束后移除
         setTimeout(() => {
+            const btn = document.querySelector('.modal-close-btn');
+            if (btn) btn.remove();
             overlay.remove();
             this.currentModal = null;
             this.isClosing = false;
@@ -972,6 +1019,8 @@ const modalManager = {
     forceClose() {
         if (!this.currentModal) return;
         const { overlay } = this.currentModal;
+        const btn = document.querySelector('.modal-close-btn');
+        if (btn) btn.remove();
         overlay.remove();
         this.currentModal = null;
         this.isClosing = false;
